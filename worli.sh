@@ -163,6 +163,8 @@ binbowstype() {
 }
 until binbowstype; do : ; done
 
+sync 
+
 sudo mkfs.fat -F 32 /dev/$disk'1'
 sudo mkfs.ntfs -f /dev/$disk'2'
 
@@ -240,6 +242,8 @@ until piold; do : ; done
 echo " "
 echo "unmounting drive, this may also take awhile"
 echo " "
+
+sync
 
 echo "again, ignore the 'not mounted' errors, they are normal"
 umount /dev/$disk*
