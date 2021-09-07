@@ -32,11 +32,18 @@ echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases"
 echo "  for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
 echo "then place the zip in files and rename it 'UEFI_Firmware.zip'"
 echo " "
-echo "- If you're using a Raspberry Pi 4, you must update the bootloader to the latest version: https://www.raspberrypi.org/documentation/hardware/raspberrypi/booteeprom.md"
+echo "- If you're using a Raspberry Pi 4, you must update the bootloader to the latest version: https://www.raspberrypi.org/documentation/computers/raspberry-pi.html#updating-the-bootloader"
+echo " "
 
 if ! command -v wimupdate &> /dev/null
 then
     echo "- wimtools package not installed. install it (for debian and ubuntu its 'sudo apt install wimtools', for arch it's wimlib)"
+    exit 1
+fi
+
+if ! command -v parted &> /dev/null
+then
+    echo "- parted package not installed. install it.)"
     exit 1
 fi
 
