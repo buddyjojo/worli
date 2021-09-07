@@ -16,49 +16,62 @@ chmod 777 files/wim
 chmod 777 files/isomount
 
 echo " "
-echo "prerequisites"
-echo " "
-echo "- get the windows iso: https://www.worproject.ml/guides/getting-windows-images"
-echo "  place the windows iso in the files/iso folder then rename it to 'win.iso'"
-echo " "
-echo "- (NOT RECOMMENDED) if you want use use a custom wim place it in files/wim and rename it to 'install.wim' NOTE: you still need the iso the wim came from in files/iso"
-echo " "
-echo "- go to https://www.worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then place the zip in the 'files' folder and rename it to 'WoR-PE_Package.zip'"
-echo " "
-echo "- download the latest driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) then place the zip in the files folder and rename it to Windows_ARM64_Drivers.zip"
-echo " "
-echo "- download the latest UEFI package: (not the source code)"
-echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases"
-echo "  for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
-echo "then place the zip in files and rename it 'UEFI_Firmware.zip'"
-echo " "
-echo "- If you're using a Raspberry Pi 4, you must update the bootloader to the latest version: https://www.raspberrypi.org/documentation/computers/raspberry-pi.html#updating-the-bootloader"
-echo " "
-
-if ! command -v wimupdate &> /dev/null
-then
-    echo "- wimtools package not installed. install it (for debian and ubuntu its 'sudo apt install wimtools', for arch it's wimlib)"
-    exit 1
-fi
-
-if ! command -v parted &> /dev/null
-then
-    echo "- parted package not installed. install it.)"
-    exit 1
-fi
-
-echo -e "\e[0;31mDO THE PRE STUFF BEFORE CONTINUING\e[0m"
-
-read -p "Press any key to continue..."
+echo -e "are you installing to a Raspberry Pi 4 or a Raspberry Pi 3, CM3 or 2?"
+read -r -p "[4/3]: " input
+case $input in
+    [4])
+ export PI="4"
+ ;;
+    [3])
+ export PI="3"
+       ;;
+    *)
+ echo "Invalid input..."
+ exit 1
+ ;;
+esac 
 
 echo " "
-if [ -f "files/iso/win.iso" ]; then
-    echo "files/iso/win.iso found"
-else 
-    echo "files/iso/win.iso does not exist. abort."
-    exit 1
-fi
+echo -e "do you want the tool to download the uefi, drivers and pe-installer or use your own files?"
+read -r -p "[Y/N]: " input
+case $input in
+    [yY][eE][sS]|[yY])
+    
+    if ! command -v wget &> /dev/null
+    then
+        echo "- wget package not installed. install it (for debian and ubuntu its 'sudo apt install wget', for arch it's also wget)"
+        exit 1
+    fi
 
+  efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
+  wget -O "files/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+  
+  drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
+  wget -O "files/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+  
+  peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.ml/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
+  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "files/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download pe-installer"
+ ;;
+    [nN][oO]|[nN])
+    echo " "
+    echo "- go to https://www.worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then place the zip in the 'files' folder and rename it to 'WoR-PE_Package.zip'"
+    echo " "
+    echo "- download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) then place the zip in the files folder and rename it to Windows_ARM64_Drivers.zip"
+    echo " "
+    echo "- download the UEFI package: (not the source code)"
+    echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases" 
+    echo "  for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
+    echo "then place the zip in files and rename it 'UEFI_Firmware.zip'"
+    echo " "
+    read -p "Press any key to continue once you did that stuff"
+       ;;
+    *)
+ echo "Invalid input..."
+ exit 1
+ ;;
+esac
+
+echo " "
 if [ -f "files/WoR-PE_Package.zip" ]; then
     echo "files/WoR-PE_Package.zip found"
 else 
@@ -77,6 +90,41 @@ if [ -f "files/UEFI_Firmware.zip" ]; then
     echo "files/UEFI_Firmware.zip found"
 else 
     echo "files/UEFI_Firmware.zip does not exist. abort."
+    exit 1
+fi
+
+echo " "
+echo "prerequisites"
+echo " "
+echo "- get the windows iso: https://www.worproject.ml/guides/getting-windows-images"
+echo "  place the windows iso in the files/iso folder then rename it to 'win.iso'"
+echo " "
+echo "- (NOT RECOMMENDED) if you want use use a custom wim place it in files/wim and rename it to 'install.wim' NOTE: you still need the iso the wim came from in files/iso"
+echo " "
+echo "- If you're using a Raspberry Pi 4, you must update the bootloader to the latest version: https://www.raspberrypi.org/documentation/computers/raspberry-pi.html#updating-the-bootloader"
+echo " "
+
+if ! command -v wimupdate &> /dev/null
+then
+    echo "- wimtools package not installed. install it (for debian and ubuntu its 'sudo apt install wimtools', for arch it's wimlib)"
+    exit 1
+fi
+
+if ! command -v parted &> /dev/null
+then
+    echo "- parted package not installed. install it (for debian and ubuntu its 'sudo apt install parted', for arch it's also parted)"
+    exit 1
+fi
+
+echo -e "\e[0;31mDO THE PRE STUFF BEFORE CONTINUING\e[0m"
+
+read -p "Press any key to continue..."
+
+echo " "
+if [ -f "files/iso/win.iso" ]; then
+    echo "files/iso/win.iso found"
+else 
+    echo "files/iso/win.iso does not exist. abort."
     exit 1
 fi
 echo " "
@@ -217,27 +265,12 @@ echo " "
 echo "ignore cp: -r not specified; omitting directory ..."
 echo " "
 
-piold() {
-    echo " "
-    echo -e "are you installing to a Raspberry Pi 2, 3 or CM3?"
-    echo " "
-    read -r -p "[Y/N]: " input
-    case $input in
-        [yY][eE][sS]|[yY])
-        dd if=files/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
-        return 0
-        ;;
-        [nN][oO]|[nN])
-        echo "good, they suck with wor anyways"
-        return 0
-        ;;
-        *)
-        echo "Invalid input..."
-        return 1
-        ;;
-    esac 
-}
-until piold; do : ; done
+if [[ $PI == *"3"* ]]; then
+    echo "installing to pi 3, applying gptpatch"
+    dd if=files/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
+else
+    echo "installing to pi 4, no need to apply gptpatch" 
+fi
 
 echo " "
 echo "unmounting drive, this may also take awhile"
