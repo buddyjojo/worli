@@ -61,7 +61,7 @@ case $input in
     echo "- download the UEFI package: (not the source code)"
     echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases" 
     echo "  for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
-    echo "then place the zip in files and rename it 'UEFI_Firmware.zip'"
+    echo "  then place the zip in files and rename it 'UEFI_Firmware.zip'"
     echo " "
     read -p "Press any key to continue once you did that stuff"
        ;;
