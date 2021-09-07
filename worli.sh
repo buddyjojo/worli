@@ -116,6 +116,12 @@ then
     exit 1
 fi
 
+if ! command -v mkfs.ntfs &> /dev/null
+then
+    echo "- mkfs.ntfs command not found. install ntfs support somehow (like ntfs-3g and ntfsprogs)"
+    exit 1
+fi
+
 echo -e "\e[0;31mDO THE PRE STUFF BEFORE CONTINUING\e[0m"
 
 read -p "Press any key to continue..."
