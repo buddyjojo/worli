@@ -6,14 +6,14 @@ fi
 echo  "WORli, made by JoJo Autoboy#1111"
 echo  "heavily based off of Mario's wor linux guide: https://www.worproject.ml/guides/how-to-install/from-other-os"
 
-mkdir -p files
-mkdir -p files/iso
-mkdir -p files/wim
-mkdir -p files/isomount
-chmod 777 files
-chmod 777 files/iso
-chmod 777 files/wim
-chmod 777 files/isomount
+#mkdir -p files
+#mkdir -p files/iso
+#mkdir -p files/wim
+mkdir -p /tmp/isomount
+#chmod 777 files
+#chmod 777 files/iso
+#chmod 777 files/wim
+chmod 777 /tmp/isomount
 
 echo " "
 echo -e "are you installing to a Raspberry Pi 4 or a Raspberry Pi 3, CM3 or 2?"
@@ -53,17 +53,29 @@ case $input in
   wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "files/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download pe-installer"
  ;;
     [nN][oO]|[nN])
+    
     echo " "
-    echo "- go to https://www.worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then place the zip in the 'files' folder and rename it to 'WoR-PE_Package.zip'"
+    echo "- go to https://www.worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer' then rename the zip to 'WoR-PE_Package.zip'"
     echo " "
-    echo "- download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) then place the zip in the files folder and rename it to Windows_ARM64_Drivers.zip"
+    
+    echo "what's the path to the 'WoR-PE_Package.zip'?"
+    read -r -p "[/*] eg '/home/pi/WoR-PE_Package.zip'': " inst
+    
     echo " "
+    echo "- download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) and rename the zip to Windows_ARM64_Drivers.zip"
+    echo " "
+    
+    echo "what's the path to the 'Windows_ARM64_Drivers.zip'?"
+    read -r -p "[/*] eg '/home/pi/Windows_ARM64_Drivers.zip'': " driv
+    
     echo "- download the UEFI package: (not the source code)"
     echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases" 
     echo "  for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
-    echo "  then place the zip in files and rename it 'UEFI_Firmware.zip'"
+    echo "  then rename the zip to 'UEFI_Firmware.zip'"
     echo " "
-    read -p "Press any key to continue once you did that stuff"
+    
+    echo "what's the path to the 'UEFI_Firmware.zip'?"
+    read -r -p "[/*] eg '/home/pi/UEFI_Firmware.zip'': " efi
        ;;
     *)
  echo "Invalid input..."
@@ -72,24 +84,24 @@ case $input in
 esac
 
 echo " "
-if [ -f "files/WoR-PE_Package.zip" ]; then
-    echo "files/WoR-PE_Package.zip found"
+if [ -f "$inst" ]; then
+    echo "WoR-PE_Package.zip found"
 else 
-    echo "files/WoR-PE_Package.zip does not exist. abort."
+    echo "WoR-PE_Package.zip does not exist. abort."
     exit 1
 fi
 
-if [ -f "files/Windows_ARM64_Drivers.zip" ]; then
-    echo "files/Windows_ARM64_Drivers.zip found"
+if [ -f "$driv" ]; then
+    echo "Windows_ARM64_Drivers.zip found"
 else 
-    echo "files/Windows_ARM64_Drivers.zip does not exist. abort."
+    echo "Windows_ARM64_Drivers.zip does not exist. abort."
     exit 1
 fi
 
-if [ -f "files/UEFI_Firmware.zip" ]; then
-    echo "files/UEFI_Firmware.zip found"
+if [ -f "$efi" ]; then
+    echo "UEFI_Firmware.zip found"
 else 
-    echo "files/UEFI_Firmware.zip does not exist. abort."
+    echo "UEFI_Firmware.zip does not exist. abort."
     exit 1
 fi
 
@@ -97,9 +109,9 @@ echo " "
 echo "prerequisites"
 echo " "
 echo "- get the windows iso: https://www.worproject.ml/guides/getting-windows-images"
-echo "  place the windows iso in the files/iso folder then rename it to 'win.iso'"
+echo "  rename the iso to 'win.iso'"
 echo " "
-echo "- (NOT RECOMMENDED) if you want use use a custom wim place it in files/wim and rename it to 'install.wim' NOTE: you still need the iso the wim came from in files/iso"
+echo "- (NOT RECOMMENDED) if you want use use a custom wim rename it to 'install.wim' NOTE: you still need the iso the wim came from"
 echo " "
 echo "- If you're using a Raspberry Pi 4, you must update the bootloader to the latest version: https://www.raspberrypi.org/documentation/computers/raspberry-pi.html#updating-the-bootloader"
 echo " "
@@ -124,13 +136,47 @@ fi
 
 echo -e "\e[0;31mDO THE PRE STUFF BEFORE CONTINUING\e[0m"
 
+echo " "
 read -p "Press any key to continue..."
+echo " "
+
+echo "what's the path to the 'win.iso'?"
+read -r -p "[/*] eg '/home/pi/win.iso'': " iso
 
 echo " "
-if [ -f "files/iso/win.iso" ]; then
-    echo "files/iso/win.iso found"
+echo "do you want to use a custom wim?)"
+echo " "
+
+case $input in
+    [yY][eE][sS]|[yY])
+    
+    echo "what's the path to the 'install.wim'?"
+    read -r -p "[/*] eg '/home/pi/install.wim'': " wim
+    
+    echo " "
+    if [ -f "$wim" ]; then
+        echo "install.wim found"
+    else 
+        echo "install.wim does not exist. abort."
+        exit 1
+    fi
+ ;;
+    [nN][oO]|[nN])
+    
+    echo "no custom wim then"
+
+       ;;
+    *)
+ echo "Invalid input..."
+ exit 1
+ ;;
+esac
+
+echo " "
+if [ -f "$iso" ]; then
+    echo "win.iso found"
 else 
-    echo "files/iso/win.iso does not exist. abort."
+    echo "win.iso does not exist. abort."
     exit 1
 fi
 echo " "
@@ -232,40 +278,40 @@ echo " "
 echo "note: 'WARNING: device write-protected, mounted read-only.' is also normal"
 echo " "
 
-mount files/iso/win.iso files/isomount
+mount $iso /tmp/isomount
 
-cp -r files/isomount/boot /media/bootpart
-cp -r files/isomount/efi /media/bootpart
+cp -r /tmp/isomount/boot /media/bootpart
+cp -r /tmp/isomount/efi /media/bootpart
 mkdir /media/bootpart/sources
-cp files/isomount/sources/boot.wim /media/bootpart/sources
+cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
 
-if [ -f "files/wim/install.wim" ]; then
-    cp files/wim/install.wim /media/winpart
+if [ -f "$wim" ]; then
+    cp $wim /media/winpart
 else 
-    cp files/isomount/sources/install.wim /media/winpart
+    cp /tmp/isomount/sources/install.wim /media/winpart
 fi
 
-umount files/isomount
+umount /tmp/isomount
 
 echo " "
 echo "copying the drivers to the drive..."
 echo " "
 
-unzip files/WoR-PE_Package.zip -d files/peinstaller
+unzip $inst -d /tmp/peinstaller
 
-cp -r files/peinstaller/efi /media/bootpart
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add files/peinstaller/winpe/2 /"
+cp -r /tmp/peinstaller/efi /media/bootpart
+wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
 
 
-unzip files/Windows_ARM64_Drivers.zip -d files/driverpackage
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add files/driverpackage /drivers"
+unzip $driv -d /tmp/driverpackage
+wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
 echo " "
 echo "copying the uefi boot files to the drive..."
 echo " "
 
-unzip files/UEFI_Firmware.zip -d files/uefipackage
-sudo cp files/uefipackage/* /media/bootpart
+unzip $efi -d /tmp/uefipackage
+sudo cp /tmp/uefipackage/* /media/bootpart
 
 echo " "
 echo "ignore cp: -r not specified; omitting directory ..."
@@ -273,7 +319,7 @@ echo " "
 
 if [[ $PI == *"3"* ]]; then
     echo "installing to pi 3, applying gptpatch"
-    dd if=files/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
+    dd if=/tmp/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
 else
     echo "installing to pi 4, no need to apply gptpatch" 
 fi
@@ -291,9 +337,9 @@ umount /dev/$disk*
 echo " "
 echo "cleaning up..."
 
-rm -rf files/driverpackage
-rm -rf files/uefipackage
-rm -rf files/peinstaller
+rm -rf /tmp/driverpackage
+rm -rf /tmp/uefipackage
+rm -rf /tmp/peinstaller
 
 echo " "
 echo "Connect the drive and other peripherals to your Raspberry Pi then boot it up."
