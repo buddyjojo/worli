@@ -6,13 +6,7 @@ fi
 echo  "WORli, made by JoJo Autoboy#1111"
 echo  "heavily based off of Mario's wor linux guide: https://www.worproject.ml/guides/how-to-install/from-other-os"
 
-#mkdir -p files
-#mkdir -p files/iso
-#mkdir -p files/wim
 mkdir -p /tmp/isomount
-#chmod 777 files
-#chmod 777 files/iso
-#chmod 777 files/wim
 chmod 777 /tmp/isomount
 
 echo " "
@@ -340,6 +334,7 @@ echo "cleaning up..."
 rm -rf /tmp/driverpackage
 rm -rf /tmp/uefipackage
 rm -rf /tmp/peinstaller
+rm -rf /tmp/isomount
 
 echo " "
 echo "Connect the drive and other peripherals to your Raspberry Pi then boot it up."
