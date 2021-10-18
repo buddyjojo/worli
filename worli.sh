@@ -38,13 +38,22 @@ case $input in
     fi
 
   efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
-  wget -O "files/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+  wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
   
   drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
-  wget -O "files/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+  wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
   
   peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.ml/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
-  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "files/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download pe-installer"
+  wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download pe-installer"
+  
+  export inst="/tmp/UEFI_Firmware.zip"
+  
+  export driv="/tmp/Windows_ARM64_Drivers.zip"
+  
+  export efi="/tmp/WoR-PE_Package.zip"
+  
+  export auto="1"
+  
  ;;
     [nN][oO]|[nN])
     
@@ -53,14 +62,14 @@ case $input in
     echo " "
     
     echo "what's the path to the 'WoR-PE_Package.zip'?"
-    read -r -p "[/*] eg '/home/pi/WoR-PE_Package.zip'': " inst
+    read -r -p "[/*] eg '/home/pi/WoR-PE_Package.zip': " inst
     
     echo " "
     echo "- download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) and rename the zip to Windows_ARM64_Drivers.zip"
     echo " "
     
     echo "what's the path to the 'Windows_ARM64_Drivers.zip'?"
-    read -r -p "[/*] eg '/home/pi/Windows_ARM64_Drivers.zip'': " driv
+    read -r -p "[/*] eg '/home/pi/Windows_ARM64_Drivers.zip': " driv
     
     echo "- download the UEFI package: (not the source code)"
     echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases" 
@@ -69,7 +78,7 @@ case $input in
     echo " "
     
     echo "what's the path to the 'UEFI_Firmware.zip'?"
-    read -r -p "[/*] eg '/home/pi/UEFI_Firmware.zip'': " efi
+    read -r -p "[/*] eg '/home/pi/UEFI_Firmware.zip': " efi
        ;;
     *)
  echo "Invalid input..."
@@ -135,7 +144,7 @@ read -p "Press any key to continue..."
 echo " "
 
 echo "what's the path to the 'win.iso'?"
-read -r -p "[/*] eg '/home/pi/win.iso'': " iso
+read -r -p "[/*] eg '/home/pi/win.iso': " iso
 
 echo " "
 echo "do you want to use a custom wim?)"
@@ -145,7 +154,7 @@ case $input in
     [yY][eE][sS]|[yY])
     
     echo "what's the path to the 'install.wim'?"
-    read -r -p "[/*] eg '/home/pi/install.wim'': " wim
+    read -r -p "[/*] eg '/home/pi/install.wim': " wim
     
     echo " "
     if [ -f "$wim" ]; then
@@ -335,6 +344,18 @@ rm -rf /tmp/driverpackage
 rm -rf /tmp/uefipackage
 rm -rf /tmp/peinstaller
 rm -rf /tmp/isomount
+
+
+if [[ $auto == *"1"* ]]; then
+    rm -rf /tmp/UEFI_Firmware.zip
+    rm -rf /tmp/Windows_ARM64_Drivers.zip
+    rm -rf /tmp/WoR-PE_Package.zip
+else
+    echo " "
+    echo "no need to clear downloaded files" 
+fi
+
+
 
 echo " "
 echo "Connect the drive and other peripherals to your Raspberry Pi then boot it up."
