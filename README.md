@@ -1,4 +1,5 @@
 # worli
+<img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="100" height="100">
 simple wor on linux installer
 
 unlike botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash, wimlib, parted and ntfs support. 
