@@ -366,6 +366,7 @@ echo "If you've used the first method (self-installation), there's no need to to
 echo " "
 echo "If you've used the second method (install on a secondary drive), you must also connect the 2nd drive before the installer window opens up, then select it in the drop-down list. Otherwise it will assume you're trying to install Windows on the same drive (self-installation)."
 echo " "
+echo -e "\e[0;31mNOTE:\e[0m disabling the 3gb ram limit before first boot can cause the disk to not be reconized in the pe installer. after the instalation though the limit can be removed"
 
 echo "all done :)"
 exit 1
