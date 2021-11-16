@@ -213,6 +213,20 @@ else
     export nisk="$disk"
 fi
 
+if [[ $disk == *"/dev"* ]]; then
+    echo "DO NOT PUT /dev, only put the name like 'sdb'"
+    exit 1
+else
+   echo "disk name format correct" 
+fi
+
+if [ -f "$disk" ]; then
+   echo "$disk found"
+else 
+   echo "$disk does not exist. abort."
+   exit 1
+fi
+
 echo -e "\e[0;31mWARNING: THE DISK $disk WILL BE WIPED\e[0m do you want to continue?"
 read -r -p "[Y/N]: " input
 case $input in
