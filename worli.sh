@@ -221,7 +221,7 @@ else
    echo "disk name format correct" 
 fi
 
-if [ -f "$disk" ]; then
+if [ -b "$disk" ]; then
    echo "$disk found"
 else 
    echo "$disk does not exist. abort."
