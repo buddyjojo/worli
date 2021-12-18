@@ -150,6 +150,7 @@ echo " "
 echo "do you want to use a custom wim?)"
 echo " "
 
+read -r -p "[Y/N]: " input
 case $input in
     [yY][eE][sS]|[yY])
     
