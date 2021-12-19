@@ -46,11 +46,11 @@ case $input in
   peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.ml/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
   wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download pe-installer"
   
-  export inst="/tmp/UEFI_Firmware.zip"
+  export efi="/tmp/UEFI_Firmware.zip"
   
   export driv="/tmp/Windows_ARM64_Drivers.zip"
   
-  export efi="/tmp/WoR-PE_Package.zip"
+  export inst="/tmp/WoR-PE_Package.zip"
   
   export auto="1"
   
@@ -150,7 +150,7 @@ echo " "
 echo "do you want to use a custom wim?)"
 echo " "
 
-read -r -p "[Y/N]: " input
+read -r -p "[N/Y]: " input
 case $input in
     [yY][eE][sS]|[yY])
     
