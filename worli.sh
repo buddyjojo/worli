@@ -147,7 +147,7 @@ echo "what's the path to the 'win.iso'?"
 read -r -p "[/*] eg '/home/pi/win.iso': " iso
 
 echo " "
-echo "do you want to use a custom wim?)"
+echo "do you want to use a custom wim?"
 echo " "
 
 read -r -p "[N/Y]: " input
