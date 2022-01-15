@@ -3,7 +3,7 @@
 
 Simple WoR on linux installer.
 
-Unlike botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash, wimlib, parted and ntfs support. 
+Unlike botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible}, wimlib, parted and ntfs support. 
  
 Also you can use your own iso and even an wim*
 
