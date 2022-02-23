@@ -62,14 +62,14 @@ case $input in
     echo " "
     
     echo "what's the path to the 'WoR-PE_Package.zip'?"
-    read -r -p "[/*] eg '/home/pi/WoR-PE_Package.zip': " inst
+    read -r -p "[/*] eg '~/WoR-PE_Package.zip': " inst
     
     echo " "
     echo "- download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) and rename the zip to Windows_ARM64_Drivers.zip"
     echo " "
     
     echo "what's the path to the 'Windows_ARM64_Drivers.zip'?"
-    read -r -p "[/*] eg '/home/pi/Windows_ARM64_Drivers.zip': " driv
+    read -r -p "[/*] eg '~/Windows_ARM64_Drivers.zip': " driv
     
     echo "- download the UEFI package: (not the source code)"
     echo "  for Pi 4 and newer: https://github.com/pftf/RPi4/releases" 
@@ -78,7 +78,7 @@ case $input in
     echo " "
     
     echo "what's the path to the 'UEFI_Firmware.zip'?"
-    read -r -p "[/*] eg '/home/pi/UEFI_Firmware.zip': " efi
+    read -r -p "[/*] eg '~/UEFI_Firmware.zip': " efi
        ;;
     *)
  echo "Invalid input..."
@@ -87,21 +87,21 @@ case $input in
 esac
 
 echo " "
-if [ -f "$inst" ]; then
+if [ -f $inst ]; then
     echo "WoR-PE_Package.zip found"
 else 
     echo "WoR-PE_Package.zip does not exist. abort."
     exit 1
 fi
 
-if [ -f "$driv" ]; then
+if [ -f $driv ]; then
     echo "Windows_ARM64_Drivers.zip found"
 else 
     echo "Windows_ARM64_Drivers.zip does not exist. abort."
     exit 1
 fi
 
-if [ -f "$efi" ]; then
+if [ -f $efi ]; then
     echo "UEFI_Firmware.zip found"
 else 
     echo "UEFI_Firmware.zip does not exist. abort."
@@ -144,7 +144,7 @@ read -p "Press any key to continue..."
 echo " "
 
 echo "what's the path to the 'win.iso'?"
-read -r -p "[/*] eg '/home/pi/win.iso': " iso
+read -r -p "[/*] eg '~/win.iso': " iso
 
 echo " "
 echo "do you want to use a custom wim?"
@@ -155,10 +155,10 @@ case $input in
     [yY][eE][sS]|[yY])
     
     echo "what's the path to the 'install.wim'?"
-    read -r -p "[/*] eg '/home/pi/install.wim': " wim
+    read -r -p "[/*] eg '~/install.wim': " wim
     
     echo " "
-    if [ -f "$wim" ]; then
+    if [ -f $wim ]; then
         echo "install.wim found"
     else 
         echo "install.wim does not exist. abort."
@@ -166,7 +166,7 @@ case $input in
     fi
  ;;
     [nN][oO]|[nN])
-    
+    echo " "
     echo "no custom wim then"
 
        ;;
@@ -177,7 +177,7 @@ case $input in
 esac
 
 echo " "
-if [ -f "$iso" ]; then
+if [ -f $iso ]; then
     echo "win.iso found"
 else 
     echo "win.iso does not exist. abort."
@@ -303,7 +303,7 @@ cp -r /tmp/isomount/efi /media/bootpart
 mkdir /media/bootpart/sources
 cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
 
-if [ -f "$wim" ]; then
+if [ -f $wim ]; then
     cp $wim /media/winpart
 else 
     cp /tmp/isomount/sources/install.wim /media/winpart
