@@ -34,6 +34,7 @@ esac
 echo " "
 echo -e "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'N' to use your own files"
 read -r -p "[Y/N]: " input
+echo " "
 case $input in
 
     [yY][eE][sS]|[yY])
@@ -186,7 +187,9 @@ fi
 echo " "
 echo "What /dev/* is your drive? NOTE: ALL your data on the selected disk will be ERASED, proceed with caution!"
 echo "---------------------------------------------------------------------------------------------------------"
+echo " "
 parted -l
+echo " "
 read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0': " disk
 
 echo "You have selected '$disk', is this correct?"
@@ -225,7 +228,7 @@ else
    exit 1
 fi
 
-echo -e "\e[0;31mWARNING: THE DISK '$disk' WILL BE WIPED\e[0m Do you want to continue?"
+echo -e "\e[0;31mWARNING: THE DISK '$disk' WILL BE WIPED!\e[0m Do you want to continue?"
 read -r -p "[Y/N]: " input
 case $input in
     [yY][eE][sS]|[yY])
@@ -245,6 +248,7 @@ echo " "
 echo "Creating partitions..."
 echo " "
 echo "*Ignore the 'not mounted' errors, they are normal*"
+echo " "
 
 umount /dev/$disk*
 
@@ -257,6 +261,7 @@ binbowstype() {
     echo "[1]: Do you want the installer to be able to install Windows on the same drive (at least 32GB)?"
     echo "[2]: OR create an installation media on this drive (at least 8GB) that's able to install Windows on other drives (at least 16GB)?"
     read -r -p "[1/2]: " input
+    echo " "
     case $input in
         [1])
         parted -s /dev/$disk mkpart primary 1000MB 19000MB
@@ -289,6 +294,7 @@ echo " "
 echo "Copying Windows files to the drive, this may take a while..."
 echo " "
 echo "*NOTE: 'WARNING: Device write-protected, mounted read-only' is also normal*"
+echo " "
 
 mount $iso /tmp/isomount
 cp -r /tmp/isomount/boot /media/bootpart
@@ -306,18 +312,21 @@ umount /tmp/isomount
 
 echo " "
 echo "Copying the UEFI boot files to the drive..."
+echo " "
 
 unzip $efi -d /tmp/uefipackage
 sudo cp /tmp/uefipackage/* /media/bootpart
 
 echo " "
 echo "Copying the drivers to the drive..."
+echo " "
 
 unzip $driv -d /tmp/driverpackage
 wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
 echo " "
 echo "Copying the PE-installer to the drive..."
+echo " "
 
 unzip $inst -d /tmp/peinstaller
 cp -r /tmp/peinstaller/efi /media/bootpart
@@ -329,6 +338,7 @@ echo "*Ignore 'cp: -r not specified; omitting directory...'*"
 echo " "
 if [[ $PI == *"3"* ]]; then
     echo "Installing to Pi 3 and below, applying gptpatch..."
+    echo " "
     dd if=/tmp/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
 else
     echo "Installing to Pi 4, no need to apply gptpatch"
@@ -341,6 +351,7 @@ sync
 
 echo " "
 echo "*Again, ignore the 'not mounted' errors, they are normal*"
+echo " "
 
 umount /dev/$disk*
 
