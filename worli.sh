@@ -121,17 +121,17 @@ echo "- If you're using a Raspberry Pi 4, you may have to update the Bootloader 
 echo " "
 if ! command -v wimupdate &> /dev/null
 then
-    echo "- 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; For Arch, run 'sudo pacman -S wimtools')"
+    echo "- 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
     exit 1
 fi
 if ! command -v parted &> /dev/null
 then
-    echo "- 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; For Arch, run 'sudo pacman -S parted')"
+    echo "- 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; for Arch, run 'sudo pacman -S parted')"
     exit 1
 fi
 if ! command -v mkfs.ntfs &> /dev/null
 then
-    echo "- 'mkfs.ntfs' command not found. Install NTFW support somehow (such as ntfs-3g and ntfsprogs)"
+    echo "- 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs)"
     exit 1
 fi
 
