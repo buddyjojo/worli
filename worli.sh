@@ -41,7 +41,7 @@ case $input in
 
     if ! command -v wget &> /dev/null
     then
-        echo "- wget package not installed. Install it (for Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget')"
+        echo "- 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget')"
         exit 1
     fi
 
