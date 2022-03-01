@@ -15,7 +15,7 @@ INSTRUCTIONS:
 
 2. Put the script into a empty folder WITH NO SPACES IN ITS NAME!
 
-3. Open the terminal in that folder and run `sudo ./worli.sh` / `sudo bash worli.sh` (or just `./worli.sh` / `bash worli.sh` in a root shell)
+3. Open the terminal in that folder and run `sudo ./worli.sh` or `sudo bash worli.sh` (in a root shell, just `./worli.sh` or `bash worli.sh`)
 
 4. Follow the instructions the script gives
 

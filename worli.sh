@@ -26,7 +26,7 @@ case $input in
     export PI="3"
     ;;
     *)
-    echo "Unsupported model"
+    echo "Invalid input"
     exit 1
     ;;
 esac
@@ -116,7 +116,7 @@ echo "- Rename the ISO file to 'win.iso'"
 echo " "
 echo "- (NOT RECOMMENDED) If you want use use a custom WIM, rename it to 'install.wim'. NOTE: You will still need the ISO where the WIM came from"
 echo " "
-echo "- If you're using a Raspberry Pi 4, you may have to update the Bootloader to the latest version: https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader"
+echo "- If you're using a Raspberry Pi 4, you must update the Bootloader to the latest version: https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader"
 
 echo " "
 if ! command -v wimupdate &> /dev/null
@@ -131,7 +131,7 @@ then
 fi
 if ! command -v mkfs.ntfs &> /dev/null
 then
-    echo "- 'mkfs.ntfs' command not found. Install NTFW support somehow (such as ntfs-3g and ntfsprogs)"
+    echo "- 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs)"
     exit 1
 fi
 
@@ -193,7 +193,7 @@ echo "You have selected '$disk', is this correct?"
 read -r -p "[Y/N]: " input
 case $input in
     [yY][eE][sS]|[yY])
-    echo "OK '$disk' it is then"
+    echo "ok '$disk' it is then"
     ;;
     [nN][oO]|[nN])
     echo "Abort."
@@ -210,12 +210,14 @@ if [[ $disk == *"mmcblk"* ]]; then
 else
     export nisk="$disk"
 fi
+
 if [[ $disk == *"/dev"* ]]; then
     echo "DO NOT PUT '/dev', only put the name like 'sdb'"
     exit 1
 else
     echo "Disk name format correct"
 fi
+
 if [ -b "/dev/$disk" ]; then
    echo "'$disk' found"
 else
