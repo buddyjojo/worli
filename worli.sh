@@ -10,7 +10,7 @@ echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproj
 mkdir -p /tmp/isomount
 chmod 777 /tmp/isomount
 
-echo ""
+echo " "
 echo -e "${PREFIX} Are you installing to a Raspberry Pi 4, 3, CM3, or 2?"
 read -r -p "[4/3/CM3/2]: " input
 case $input in
@@ -26,10 +26,10 @@ case $input in
     ;;
 esac
 
-echo ""
+echo " "
 echo -e "${PREFIX} Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'N' to use your own files"
 read -r -p "[Y/N]: " input
-echo ""
+echo " "
 case $input in
 
     [yY][eE][sS]|[yY])
@@ -55,24 +55,24 @@ case $input in
 
     [nN][oO]|[nN])
 
-    echo ""
+    echo " "
     echo -e "${PREFIX} - Download the UEFI package (not the source code):"
     echo -e "${PREFIX}   - for Pi 4 and newer: https://github.com/pftf/RPi4/releases"
     echo -e "${PREFIX}   - for Pi 2, 3, CM3: https://github.com/pftf/RPi3/releases"
     echo -e "${PREFIX} - Then, rename the ZIP file to 'UEFI_Firmware.zip'"
-    echo ""
+    echo " "
     echo -e "${PREFIX} What's the path to 'UEFI_Firmware.zip'?"
     read -r -p "[/*] E.g. '~/UEFI_Firmware.zip': " efi
 
-    echo ""
+    echo " "
     echo -e "${PREFIX} - Go to https://worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then rename the ZIP file to 'WoR-PE_Package.zip'"
-    echo ""
+    echo " "
     echo -e "${PREFIX} What's the path to 'WoR-PE_Package.zip'?"
     read -r -p "[/*] E.g. '~/WoR-PE_Package.zip': " inst
 
-    echo ""
+    echo " "
     echo -e "${PREFIX} - Download the driver package from: https://github.com/worproject/RPi-Windows-Drivers/releases (get the ZIP archive with the RPi prefix followed by your board version) and rename the ZIP file to Windows_ARM64_Drivers.zip"
-    echo ""
+    echo " "
     echo -e "${PREFIX} What's the path to 'Windows_ARM64_Drivers.zip'?"
     read -r -p "[/*] E.g. '~/Windows_ARM64_Drivers.zip': " driv
     ;;
@@ -84,7 +84,7 @@ case $input in
     ;;
 esac
 
-echo ""
+echo " "
 if [ -f $efi ]; then
     echo -e "${PREFIX} 'UEFI_Firmware.zip' found"
 else
@@ -104,17 +104,17 @@ else
     exit 1
 fi
 
-echo ""
+echo " "
 echo -e "${PREFIX} Prerequisites"
-echo ""
+echo " "
 echo -e "${PREFIX} - Get the windows ISO: https://worproject.ml/guides/getting-windows-images"
 echo -e "${PREFIX} - Rename the ISO file to 'win.iso'"
-echo ""
+echo " "
 echo -e "${PREFIX} - (NOT RECOMMENDED) If you want use use a custom WIM, rename it to 'install.wim'. NOTE: You will still need the ISO where the WIM came from"
-echo ""
+echo " "
 echo -e "${PREFIX} - If you're using a Raspberry Pi 4, you must update the Bootloader to the latest version: https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader"
 
-echo ""
+echo " "
 if ! command -v wimupdate &> /dev/null
 then
     echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
@@ -133,15 +133,15 @@ fi
 
 echo -e "${PREFIX} \e[0;31mDO THE PREREQUISITES STUFF BEFORE CONTINUING\e[0m"
 read -p "Press any key to continue..."
-echo ""
+echo " "
 
 echo -e "${PREFIX} What's the path to the 'win.iso'?"
 read -r -p "[/*] E.g. '~/win.iso': " iso
-echo ""
+echo " "
 
 echo -e "${PREFIX} Do you want to use a custom WIM?"
 read -r -p "[N/Y]: " input
-echo ""
+echo " "
 case $input in
 
     [yY][eE][sS]|[yY])
@@ -149,7 +149,7 @@ case $input in
     echo -e "${PREFIX} what's the path to the 'install.wim'?"
     read -r -p "[/*] E.g. '~/install.wim': " wim
 
-    echo ""
+    echo " "
     if [ -f $wim ]; then
         echo -e "${PREFIX} 'install.wim' found"
     else
@@ -160,7 +160,7 @@ case $input in
 
     [nN][oO]|[nN])
 
-    echo ""
+    echo " "
     echo -e "${PREFIX} No custom WIM then"
     ;;
 
@@ -171,7 +171,7 @@ case $input in
     ;;
 esac
 
-echo ""
+echo " "
 if [ -f $iso ]; then
     echo -e "${PREFIX} 'win.iso' found"
 else
@@ -179,12 +179,12 @@ else
     exit 1
 fi
 
-echo ""
+echo " "
 echo -e "${PREFIX} What /dev/* is your drive? NOTE: ALL your data on the selected disk will be ERASED, proceed with caution!"
 echo -e "${PREFIX} ---------------------------------------------------------------------------------------------------------"
-echo ""
+echo " "
 parted -l
-echo ""
+echo " "
 read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0': " disk
 
 echo -e "${PREFIX} You have selected '$disk', is this correct?"
@@ -239,11 +239,11 @@ case $input in
     ;;
 esac
 
-echo ""
+echo " "
 echo -e "${PREFIX} Creating partitions..."
-echo ""
+echo " "
 echo -e "${PREFIX} *Ignore the 'not mounted' errors, they are normal*"
-echo ""
+echo " "
 
 umount /dev/$disk*
 
@@ -252,11 +252,11 @@ parted -s /dev/$disk mkpart primary 1MB 1000MB
 parted -s /dev/$disk set 1 msftdata on
 
 binbowstype() {
-    echo ""
+    echo " "
     echo -e "${PREFIX} [1]: Do you want the installer to be able to install Windows on the same drive (at least 32GB)?"
     echo -e "${PREFIX} [2]: OR create an installation media on this drive (at least 8GB) that's able to install Windows on other drives (at least 16GB)?"
     read -r -p "[1/2]: " input
-    echo ""
+    echo " "
     case $input in
         [1])
         parted -s /dev/$disk mkpart primary 1000MB 19000MB
@@ -285,11 +285,11 @@ mkdir -p /media/bootpart /media/winpart
 mount /dev/$nisk'1' /media/bootpart
 mount /dev/$nisk'2' /media/winpart
 
-echo ""
+echo " "
 echo -e "${PREFIX} Copying Windows files to the drive, this may take a while..."
-echo ""
+echo " "
 echo -e "${PREFIX} *NOTE: 'WARNING: Device write-protected, mounted read-only' is also normal*"
-echo ""
+echo " "
 
 mount $iso /tmp/isomount
 cp -r /tmp/isomount/boot /media/bootpart
@@ -305,52 +305,52 @@ fi
 
 umount /tmp/isomount
 
-echo ""
+echo " "
 echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
-echo ""
+echo " "
 
 unzip $efi -d /tmp/uefipackage
 sudo cp /tmp/uefipackage/* /media/bootpart
 
-echo ""
+echo " "
 echo -e "${PREFIX} Copying the drivers to the drive..."
-echo ""
+echo " "
 
 unzip $driv -d /tmp/driverpackage
 wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
-echo ""
+echo " "
 echo -e "${PREFIX} Copying the PE-installer to the drive..."
-echo ""
+echo " "
 
 unzip $inst -d /tmp/peinstaller
 cp -r /tmp/peinstaller/efi /media/bootpart
 wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
 
-echo ""
+echo " "
 echo -e "${PREFIX} *Ignore 'cp: -r not specified; omitting directory...'*"
 
-echo ""
+echo " "
 if [[ $PI == *"3"* ]]; then
     echo -e "${PREFIX} Installing to Pi 3 and below, applying gptpatch..."
-    echo ""
+    echo " "
     dd if=/tmp/peinstaller/pi3/gptpatch.img of=/dev/$disk conv=fsync
 else
     echo -e "${PREFIX} Installing to Pi 4, no need to apply gptpatch"
 fi
 
-echo ""
+echo " "
 echo -e "${PREFIX} Unmounting drive, this may also take a while..."
 
 sync
 
-echo ""
+echo " "
 echo -e "${PREFIX} *Again, ignore the 'not mounted' errors, they are normal*"
-echo ""
+echo " "
 
 umount /dev/$disk*
 
-echo ""
+echo " "
 echo -e "${PREFIX} Cleaning up..."
 
 rm -rf /tmp/driverpackage
@@ -363,23 +363,23 @@ if [[ $auto == *"1"* ]]; then
     rm -rf /tmp/Windows_ARM64_Drivers.zip
     rm -rf /tmp/WoR-PE_Package.zip
 else
-    echo ""
+    echo " "
     echo -e "${PREFIX} No need to clear downloaded files"
 fi
 
-echo ""
+echo " "
 echo -e "${PREFIX} 1. Connect the drive and other peripherals to your Raspberry Pi then boot it up."
-echo ""
+echo " "
 echo -e "${PREFIX} 2. Assuming everything went right in the previous steps, you'll be further guided by the PE-based installer on your Pi."
-echo ""
+echo " "
 echo -e "${PREFIX}   - If you've used the 1st method (self-installation), there's no need to touch the Raspberry Pi once it has booted. The installer will automatically start the installation process after a delay of 15 seconds. Moving the mouse cursor over the Windows Setup window will stop the timer, so you'll have to manually click on the Install button."
-echo ""
+echo " "
 echo -e "${PREFIX}   - If you've used the 2nd method (installing on a secondary drive), you must also connect the 2nd drive before the installer window opens up, then select it in the drop-down list. Otherwise, it will assume you're trying to install Windows on the same drive (self-installation)."
-echo ""
+echo " "
 echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Disabling the 3gb ram limit before the first boot can cause the disk to not be recognized in the PE-installer. The limit can be removed AFTER the installation."
-echo ""
+echo " "
 
 echo -e "${PREFIX} All done :)"
 echo -e "${PREFIX} Thanks for using WoRli!"
-echo ""
+echo " "
 exit 0
