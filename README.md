@@ -1,19 +1,21 @@
-# WoRli
-<img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="100" height="100">
+# worli
+<img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="128" height="128" style="display:inline">
 
-Simple WoR on Linux Installer.
+### Simple WoR on Linux Installer.
 
-Unlike Botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible e.g zsh), wimlib, parted and ntfs support (mkfs.ntfs command). 
+Built for simplicity and compatibility.
+
+Unlike Botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, and NTFS support (`mkfs.ntfs` command). 
  
-Also you can use your own ISO and even an WIM*
+Also you can use your own ISO and even a WIM*
 
-*Custom WIM not recommended
+*\* Custom WIM not recommended*
 
-INSTRUCTIONS:
+## INSTRUCTIONS:
 
 1. Go to the releases and download "worli.sh"
 
-NOTE: I recommand you dont use the one in the repo files because it could be in a broken state.
+  > NOTE: I recommand you dont use the one in the repo files because it could be in a broken state.
 
 2. Put the script into a empty folder WITH NO SPACES IN ITS NAME!
 
@@ -21,4 +23,6 @@ NOTE: I recommand you dont use the one in the repo files because it could be in 
 
 4. Follow the instructions the script gives
 
-If you have any problems or suggestions please create an issue. 
+##
+
+##### If you have any problems or suggestions please create an issue.
