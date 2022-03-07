@@ -1,5 +1,5 @@
 # worli
-<img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="128" height="128" style="display:inline">
+<img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="128" height="128">
 
 ### Simple WoR on Linux Installer.
 
@@ -13,9 +13,9 @@ Also you can use your own ISO and even a WIM*
 
 ## INSTRUCTIONS:
 
-1. Go to the releases and download "worli.sh"
+1. Go to "Releases" and download the latest "worli.sh"
 
-  > NOTE: I recommand you dont use the one in the repo files because it could be in a broken state.
+  > NOTE: It is not recommended to use the file in this repo's code section directly because it could be in a broken state.
 
 2. Put the script into a empty folder WITH NO SPACES IN ITS NAME!
 
