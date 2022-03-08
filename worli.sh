@@ -1,6 +1,6 @@
 #!/bin/bash
 if [ "$EUID" -ne 0 ]
-    then echo "This script needs to be run as root. If you're a noob, that's 'sudo ./worli.sh'"
+    then echo "This script needs to be run as root. If you're a noob, that's 'sudo ./worli.sh' or 'sudo bash worli.sh'"
     exit 1
 fi
 echo "WoRli, made by JoJo Autoboy#1931"
@@ -16,13 +16,7 @@ case $input in
     [4])
     export PI="4"
     ;;
-    [3])
-    export PI="3"
-    ;;
-    [cC][mM][3])
-    export PI="3"
-    ;;
-    [2])
+    [3]|[cC][mM][3]|[2])
     export PI="3"
     ;;
     *)
