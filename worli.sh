@@ -10,8 +10,8 @@ mkdir -p /tmp/isomount
 chmod 777 /tmp/isomount
 
 echo " "
-echo -e "Are you installing to a Raspberry Pi 4, 3 (including CM3), or 2?"
-read -r -p "[4/3/2]: " input
+echo -e "Are you installing onto a Raspberry Pi 4, 3, CM3, or 2?"
+read -r -p "[4/3/CM3/2]: " input
 case $input in
     [4])
     export PI="4"

@@ -25,4 +25,6 @@ Also you can use your own ISO and even a WIM*
 
 ##
 
-##### If you have any problems or suggestions please create an issue.
+##### If you have any problems or suggestions, please create an issue.
+
+**Also check out our (Discord Server)[https://discord.gg/26CMEjQ47g]!**
