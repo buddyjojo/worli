@@ -147,7 +147,7 @@ case $input in
 
     echo "what's the path to the 'install.wim'?"
     read -r -p "[/*] E.g. '~/install.wim': " wim
-
+    export custwim="1"
     echo " "
     if [ -f $wim ]; then
         echo "'install.wim' found"
@@ -161,6 +161,7 @@ case $input in
 
     echo " "
     echo "No custom WIM then"
+    export custwim="0"
     ;;
 
     *)
@@ -296,7 +297,7 @@ cp -r /tmp/isomount/efi /media/bootpart
 mkdir /media/bootpart/sources
 cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
 
-if [ -f $wim ]; then
+if [[ $custwim == *"1"* ]]; then
     cp $wim /media/winpart
 else
     cp /tmp/isomount/sources/install.wim /media/winpart
