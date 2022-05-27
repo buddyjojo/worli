@@ -6,6 +6,8 @@
 Built for simplicity and compatibility.
 
 Unlike Botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, and NTFS support (`mkfs.ntfs` command). 
+
+  > NOTE: For now this script won't work on mac due to the absence of parted.
  
 Also you can use your own ISO and even a WIM*
 
