@@ -1,17 +1,15 @@
 #!/bin/bash
 PREFIX="\e[1;36m[WoRli]\e[0m"
 if [ "$EUID" -ne 0 ]
-    then echo -e "${PREFIX} This script needs to be run as root. If you're a noob, that's 'sudo ./worli.sh' or 'sudo bash worli.sh'"
-    exit 1
-fi
+
 echo -e "${PREFIX} WoRli, made by JoJo Autoboy#1931"
-echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproject.ml/guides/how-to-install/from-other-os"
+echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproject.com/guides/how-to-install/from-other-os"
 
 mkdir -p /tmp/isomount
 chmod 777 /tmp/isomount
 
 echo " "
-echo -e "${PREFIX} Are you installing to a Raspberry Pi 4, 3, CM3, or 2?"
+echo -e "${PREFIX} Are you installing onto a Raspberry Pi 4, 3, CM3, or 2?"
 read -r -p "[4/3/CM3/2]: " input
 case $input in
     [4])
@@ -44,8 +42,8 @@ case $input in
     wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
     drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
     wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
-    peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.ml/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || error "Failed to download PE-installer"
+    peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
 
     export efi="/tmp/UEFI_Firmware.zip"
     export driv="/tmp/Windows_ARM64_Drivers.zip"
@@ -65,7 +63,7 @@ case $input in
     read -r -p "[/*] E.g. '~/UEFI_Firmware.zip': " efi
 
     echo " "
-    echo -e "${PREFIX} - Go to https://worproject.ml/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then rename the ZIP file to 'WoR-PE_Package.zip'"
+    echo -e "${PREFIX} - Go to https://worproject.com/downloads#windows-on-raspberry-pe-based-installer and download the 'Windows on Raspberry PE-based installer', then rename the ZIP file to 'WoR-PE_Package.zip'"
     echo " "
     echo -e "${PREFIX} What's the path to 'WoR-PE_Package.zip'?"
     read -r -p "[/*] E.g. '~/WoR-PE_Package.zip': " inst
@@ -107,7 +105,7 @@ fi
 echo " "
 echo -e "${PREFIX} Prerequisites"
 echo " "
-echo -e "${PREFIX} - Get the windows ISO: https://worproject.ml/guides/getting-windows-images"
+echo -e "${PREFIX} - Get the windows ISO: https://worproject.com/guides/getting-windows-images"
 echo -e "${PREFIX} - Rename the ISO file to 'win.iso'"
 echo " "
 echo -e "${PREFIX} - (NOT RECOMMENDED) If you want use use a custom WIM, rename it to 'install.wim'. NOTE: You will still need the ISO where the WIM came from"
@@ -148,7 +146,7 @@ case $input in
 
     echo -e "${PREFIX} what's the path to the 'install.wim'?"
     read -r -p "[/*] E.g. '~/install.wim': " wim
-
+    export custwim="1"
     echo " "
     if [ -f $wim ]; then
         echo -e "${PREFIX} 'install.wim' found"
@@ -162,6 +160,7 @@ case $input in
 
     echo " "
     echo -e "${PREFIX} No custom WIM then"
+    export custwim="0"
     ;;
 
     *)
@@ -297,7 +296,7 @@ cp -r /tmp/isomount/efi /media/bootpart
 mkdir /media/bootpart/sources
 cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
 
-if [ -f $wim ]; then
+if [[ $custwim == *"1"* ]]; then
     cp $wim /media/winpart
 else
     cp /tmp/isomount/sources/install.wim /media/winpart
