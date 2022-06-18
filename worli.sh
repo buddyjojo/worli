@@ -1,6 +1,10 @@
 #!/bin/bash
 PREFIX="\e[1;36m[WoRli]\e[0m"
 if [ "$EUID" -ne 0 ]
+    then echo -e "${PREFIX} This script needs to be run as root. If you're a noob, that's 'sudo ./worli.sh' or 'sudo bash worli.sh'"
+
+    exit 1
+fi
 
 echo -e "${PREFIX} WoRli, made by JoJo Autoboy#1931"
 echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproject.com/guides/how-to-install/from-other-os"
