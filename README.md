@@ -17,7 +17,7 @@ Also you can use your own ISO and even a WIM*
 
 1. Go to "Releases" and download the latest "worli.sh" or use this link: https://github.com/buddyjojo/worli/releases/latest/download/worli.sh
 
-  > NOTE: It is not recommended to use the file in this repo's code section directly because it could be in a broken state.
+  > HELP WANTED: If you have a bit of spare time it would be nice if you try the script in the repo's code section and see if it works, if it does or any problem araises please create an issue or contact me on the discord server.
 
 2. Put the script into a empty folder WITH NO SPACES IN ITS NAME!
 
