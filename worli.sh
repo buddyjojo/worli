@@ -112,7 +112,7 @@ echo " "
 echo -e "${PREFIX} - Get the windows ISO: https://worproject.com/guides/getting-windows-images"
 echo -e "${PREFIX} - Rename the ISO file to 'win.iso'"
 echo " "
-echo -e "${PREFIX} - (NOT RECOMMENDED) If you want use use a custom WIM, rename it to 'install.wim'. NOTE: You will still need the ISO where the WIM came from"
+echo -e "${PREFIX} - If you want use use a modified install.wim, rename it to 'install.wim'. NOTE: You will still need the ISO where the WIM came from"
 echo " "
 echo -e "${PREFIX} - If you're using a Raspberry Pi 4, you must update the Bootloader to the latest version: https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader"
 
