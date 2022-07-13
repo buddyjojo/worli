@@ -5,13 +5,13 @@
 
 Built for simplicity and compatibility.
 
-Unlike Botspot's flasher that only works on Debian, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, and NTFS support (`mkfs.ntfs` command). 
+Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, and NTFS support (`mkfs.ntfs` command). 
 
-  > NOTE: For now this script won't work on mac due to the absence of parted.
+  > NOTE: For now this script won't work on macOS due to the absence of parted.
  
-Also you can use your own ISO and even a WIM*
+Also you can use your own ISO and even a modified install.wim*
 
-*\* Custom WIM not recommended*
+*\* A modified install.wim still requires an iso for the boot.wim and boot files*
 
 ## INSTRUCTIONS:
 
@@ -27,6 +27,6 @@ Also you can use your own ISO and even a WIM*
 
 ##
 
-##### If you have any problems or suggestions, please create an issue.
+##### If you have any problems or suggestions, please create a github issue or tell me in the discord server.
 
 **Alsor chuck our out [Discard Severe](https://discord.gg/26CMEjQ47g)!**
