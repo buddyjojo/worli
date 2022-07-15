@@ -290,7 +290,7 @@ umount /dev/$disk*
 
 if [[ $MACOS == *"1"* ]]; then
 
-printf "o\ny\nn\n1\n\n+1000M\n0700\nw\ny" | sudo gdisk /dev/$disk
+printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
 sync
 echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
 read -p "Press any key to continue..."
@@ -303,14 +303,14 @@ binbowstype() {
     echo " "
     case $input in
         [1])
-        printf "n\n2\n\n+19000M\n0700\nw\ny" | sudo gdisk /dev/$disk
+        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         read -p "Press any key to continue..."
         return 0
         ;;
         [2])
-        printf "n\n2\n\n\n0700\nw\ny" | sudo gdisk /dev/$disk
+        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         read -p "Press any key to continue..."
