@@ -20,7 +20,6 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   read -p "Press any key to continue..."
   export MACOS=1
   export PATH=$PATH:/usr/local/sbin
-  export PATH=$PATH:/usr/local/opt/gnu-sed/libexec/gnubin
 else
   export MACOS=0
 fi
@@ -61,13 +60,23 @@ case $input in
         exit 1
     fi
 
+    if [[ $MACOS == *"1"* ]]; then
+    efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
+    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+    drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
+    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+    peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | gsed 's/^Location: //g' | gsed 's/ \[following\]$//g' | grep 'drive\.google\.com' | gsed 's+.*/++g' | gsed 's/.*&id=//g')"
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | gsed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
+    else
     efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
     wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
     drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
     wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
     peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
-
+    fi
+    
+    
     export efi="/tmp/UEFI_Firmware.zip"
     export driv="/tmp/Windows_ARM64_Drivers.zip"
     export inst="/tmp/WoR-PE_Package.zip"
