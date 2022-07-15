@@ -6,6 +6,14 @@ if [ "$EUID" -ne 0 ]
     exit 1
 fi
 
+if [[ $OSTYPE == 'darwin'* ]]; then
+  echo -e "${PREFIX} macOS detected, running in experimental macOS mode."
+  echo -e "${PREFIX} You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
+  export MACOS=1
+else
+  export MACOS=0
+fi
+
 echo -e "${PREFIX} WoRli, made by JoJo Autoboy#1931"
 echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproject.com/guides/how-to-install/from-other-os"
 
@@ -38,7 +46,7 @@ case $input in
 
     if ! command -v wget &> /dev/null
     then
-        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget')"
+        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget'; for macOS, 'brew install wget')"
         exit 1
     fi
 
@@ -119,17 +127,27 @@ echo -e "${PREFIX} - If you're using a Raspberry Pi 4, you must update the Bootl
 echo " "
 if ! command -v wimupdate &> /dev/null
 then
-    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
+    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools'; for macOS, run 'brew install wimlib')"
     exit 1
 fi
-if ! command -v parted &> /dev/null
-then
-    echo -e "${PREFIX} - 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; for Arch, run 'sudo pacman -S parted')"
-    exit 1
+
+if [[ $MACOS == *"1"* ]]; then
+    if ! command -v gdisk &> /dev/null
+    then
+        echo -e "${PREFIX} - 'gdisk' package not installed. Install it ('brew install gdisk')"
+        exit 1
+    fi
+else
+    if ! command -v parted &> /dev/null
+    then
+        echo -e "${PREFIX} - 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; for Arch, run 'sudo pacman -S parted')"
+        exit 1
+    fi
 fi
+
 if ! command -v mkfs.ntfs &> /dev/null
 then
-    echo -e "${PREFIX} - 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs)"
+    echo -e "${PREFIX} - 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs, for macOS, run 'brew install ntfs-3g')"
     exit 1
 fi
 
@@ -186,7 +204,11 @@ echo " "
 echo -e "${PREFIX} What /dev/* is your drive? NOTE: ALL your data on the selected disk will be ERASED, proceed with caution!"
 echo -e "${PREFIX} ---------------------------------------------------------------------------------------------------------"
 echo " "
+if [[ $MACOS == *"1"* ]]; then
+diskutil list
+else
 parted -l
+fi
 echo " "
 read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0': " disk
 
@@ -250,6 +272,44 @@ echo " "
 
 umount /dev/$disk*
 
+if [[ $MACOS == *"1"* ]]; then
+
+printf "o\ny\nn\n1\n\n+1000M\n0700\nw\ny" | sudo gdisk "/dev/$disk"
+sync
+echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
+read -p "Press any key to continue..."
+
+binbowstype() {
+    echo " "
+    echo -e "${PREFIX} [1]: Do you want the installer to be able to install Windows on the same drive (at least 32GB)?"
+    echo -e "${PREFIX} [2]: OR create an installation media on this drive (at least 8GB) that's able to install Windows on other drives (at least 16GB)?"
+    read -r -p "[1/2]: " input
+    echo " "
+    case $input in
+        [1])
+        printf "n\n2\n\n+19000M\n0700\nw\ny" | sudo gdisk "/dev/disk0"
+        sync
+        echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        read -p "Press any key to continue..."
+        return 0
+        ;;
+        [2])
+        printf "n\n2\n\n\n0700\nw\ny" | sudo gdisk "/dev/disk0"
+        sync
+        echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        read -p "Press any key to continue..."
+        return 0
+        ;;
+        *)
+        echo -e "${PREFIX} Invalid input"
+        return 1
+        ;;
+    esac
+}
+until binbowstype; do : ; done
+
+else
+
 parted -s /dev/$disk mklabel gpt
 parted -s /dev/$disk mkpart primary 1MB 1000MB
 parted -s /dev/$disk set 1 msftdata on
@@ -278,6 +338,8 @@ binbowstype() {
     esac
 }
 until binbowstype; do : ; done
+
+fi
 
 sync
 
