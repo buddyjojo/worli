@@ -20,7 +20,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   read -p "Press any key to continue..."
   export MACOS=1
   export PATH=$PATH:/usr/local/sbin
-  export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
+  export PATH=$PATH:/usr/local/opt/gnu-sed/libexec/gnubin
 else
   export MACOS=0
 fi
