@@ -309,6 +309,7 @@ binbowstype() {
         [1])
         printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
+        diskutil unmountDisk /dev/$disk
         echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         read -p "Press any key to continue..."
         return 0
@@ -316,6 +317,7 @@ binbowstype() {
         [2])
         printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
+        diskutil unmountDisk /dev/$disk
         echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         read -p "Press any key to continue..."
         return 0
@@ -362,9 +364,10 @@ until binbowstype; do : ; done
 fi
 
 sync
-
 sudo mkfs.fat -F 32 /dev/$nisk'1'
+sync
 sudo mkfs.exfat /dev/$nisk'2'
+sync
 
 mkdir -p /tmp/bootpart /tmp/winpart
 
