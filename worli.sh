@@ -11,7 +11,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
     echo " "
     echo -e "${PREFIX} Prerequisites"
     echo -e "${PREFIX} Due to how brew works you need to run these commands in a non root shell:"
-    echo -e "${PREFIX} - 'brew install wimlib gdisk'" 
+    echo -e "${PREFIX} - 'brew install wimlib gdisk dosfstools'" 
     echo -e "${PREFIX} - 'brew install --cask macfuse'"
     echo -e "${PREFIX} - 'brew tap gmerlino/exfat'"
     echo -e "${PREFIX} - 'brew install --HEAD exfat'"
@@ -362,9 +362,21 @@ sync
 sudo mkfs.fat -F 32 /dev/$nisk'1'
 sudo mkfs.exfat /dev/$nisk'2'
 
-mkdir -p /media/bootpart /media/winpart
-mount /dev/$nisk'1' /media/bootpart
-mount /dev/$nisk'2' /media/winpart
+mkdir -p /tmp/bootpart /tmp/winpart
+
+if [[ $MACOS == *"1"* ]]; then
+    if ! command -v gdisk &> /dev/null
+    then
+        mount -t msdos /dev/$nisk'1' /tmp/bootpart
+        mount -t exfat /dev/$nisk'2' /tmp/winpart
+    fi
+else
+    if ! command -v parted &> /dev/null
+    then
+        mount /dev/$nisk'1' /tmp/bootpart
+        mount /dev/$nisk'2' /tmp/winpart
+    fi
+fi
 
 echo " "
 echo -e "${PREFIX} Copying Windows files to the drive, this may take a while..."
@@ -373,15 +385,15 @@ echo -e "${PREFIX} *NOTE: 'WARNING: Device write-protected, mounted read-only' i
 echo " "
 
 mount $iso /tmp/isomount
-cp -r /tmp/isomount/boot /media/bootpart
-cp -r /tmp/isomount/efi /media/bootpart
-mkdir /media/bootpart/sources
-cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
+cp -r /tmp/isomount/boot /tmp/bootpart
+cp -r /tmp/isomount/efi /tmp/bootpart
+mkdir /tmp/bootpart/sources
+cp /tmp/isomount/sources/boot.wim /tmp/bootpart/sources
 
 if [[ $custwim == *"1"* ]]; then
-    cp $wim /media/winpart
+    cp $wim /tmp/winpart
 else
-    cp /tmp/isomount/sources/install.wim /media/winpart
+    cp /tmp/isomount/sources/install.wim /tmp/winpart
 fi
 
 umount /tmp/isomount
@@ -391,22 +403,22 @@ echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
 echo " "
 
 unzip $efi -d /tmp/uefipackage
-sudo cp /tmp/uefipackage/* /media/bootpart
+sudo cp /tmp/uefipackage/* /tmp/bootpart
 
 echo " "
 echo -e "${PREFIX} Copying the drivers to the drive..."
 echo " "
 
 unzip $driv -d /tmp/driverpackage
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
+wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
 echo " "
 echo -e "${PREFIX} Copying the PE-installer to the drive..."
 echo " "
 
 unzip $inst -d /tmp/peinstaller
-cp -r /tmp/peinstaller/efi /media/bootpart
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
+cp -r /tmp/peinstaller/efi /tmp/bootpart
+wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
 
 echo " "
 echo -e "${PREFIX} *Ignore 'cp: -r not specified; omitting directory...'*"
@@ -438,6 +450,8 @@ rm -rf /tmp/driverpackage
 rm -rf /tmp/uefipackage
 rm -rf /tmp/peinstaller
 rm -rf /tmp/isomount
+rm -rf /tmp/bootpart
+rm -rf /tmp/winpart
 
 if [[ $auto == *"1"* ]]; then
     rm -rf /tmp/UEFI_Firmware.zip
