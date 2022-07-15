@@ -6,6 +6,24 @@ if [ "$EUID" -ne 0 ]
     exit 1
 fi
 
+if [[ $OSTYPE == 'darwin'* ]]; then
+  echo -e "${PREFIX} macOS detected, running in experimental macOS mode."
+    echo " "
+    echo -e "${PREFIX} Prerequisites"
+    echo -e "${PREFIX} Due to how brew works you need to run these commands in a non root shell:"
+    echo -e "${PREFIX} - 'brew install wimlib gdisk dosfstools gnu-sed'" 
+    echo -e "${PREFIX} - 'brew install --cask macfuse'"
+    echo -e "${PREFIX} - 'brew tap gmerlino/exfat'"
+    echo -e "${PREFIX} - 'brew install --HEAD exfat'"
+    echo -e "${PREFIX} - You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
+    echo " "
+  read -p "Press any key to continue..."
+  export MACOS=1
+  export PATH=$PATH:/usr/local/sbin
+else
+  export MACOS=0
+fi
+
 echo -e "${PREFIX} WoRli, made by JoJo Autoboy#1931"
 echo -e "${PREFIX} Heavily based off of Mario's WoR Linux guide: https://worproject.com/guides/how-to-install/from-other-os"
 
@@ -38,17 +56,27 @@ case $input in
 
     if ! command -v wget &> /dev/null
     then
-        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget')"
+        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget'; for macOS, run 'brew install wget')"
         exit 1
     fi
 
+    if [[ $MACOS == *"1"* ]]; then
+    efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
+    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+    drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
+    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+    peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | gsed 's/^Location: //g' | gsed 's/ \[following\]$//g' | grep 'drive\.google\.com' | gsed 's+.*/++g' | gsed 's/.*&id=//g')"
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | gsed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
+    else
     efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
     wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
     drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
     wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
     peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
     wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
-
+    fi
+    
+    
     export efi="/tmp/UEFI_Firmware.zip"
     export driv="/tmp/Windows_ARM64_Drivers.zip"
     export inst="/tmp/WoR-PE_Package.zip"
@@ -122,14 +150,24 @@ then
     echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
     exit 1
 fi
-if ! command -v parted &> /dev/null
-then
-    echo -e "${PREFIX} - 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; for Arch, run 'sudo pacman -S parted')"
-    exit 1
+
+if [[ $MACOS == *"1"* ]]; then
+    if ! command -v gdisk &> /dev/null
+    then
+        echo -e "${PREFIX} - 'gdisk' package not installed. Install it ('brew install gdisk')"
+        exit 1
+    fi
+else
+    if ! command -v parted &> /dev/null
+    then
+        echo -e "${PREFIX} - 'parted' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install parted'; for Arch, run 'sudo pacman -S parted')"
+        exit 1
+    fi
 fi
-if ! command -v mkfs.ntfs &> /dev/null
+
+if ! command -v mkfs.exfat &> /dev/null
 then
-    echo -e "${PREFIX} - 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs)"
+    echo -e "${PREFIX} - 'mkfs.exfat' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install exfatprogs'; For Arch, run 'sudo pacman -S exfatprogs')"
     exit 1
 fi
 
@@ -186,9 +224,13 @@ echo " "
 echo -e "${PREFIX} What /dev/* is your drive? NOTE: ALL your data on the selected disk will be ERASED, proceed with caution!"
 echo -e "${PREFIX} ---------------------------------------------------------------------------------------------------------"
 echo " "
+if [[ $MACOS == *"1"* ]]; then
+diskutil list
+else
 parted -l
+fi
 echo " "
-read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0': " disk
+read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0', 'disk7': " disk
 
 echo -e "${PREFIX} You have selected '$disk', is this correct?"
 read -r -p "[Y/N]: " input
@@ -208,6 +250,12 @@ esac
 
 if [[ $disk == *"mmcblk"* ]]; then
     export nisk="${disk}p"
+else
+    export nisk="$disk"
+fi
+
+if [[ $disk == *"disk"* ]]; then
+    export nisk="${disk}s"
 else
     export nisk="$disk"
 fi
@@ -248,7 +296,51 @@ echo " "
 echo -e "${PREFIX} *Ignore the 'not mounted' errors, they are normal*"
 echo " "
 
-umount /dev/$disk*
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk
+else
+    umount /dev/$disk*
+fi
+
+if [[ $MACOS == *"1"* ]]; then
+
+printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+sync
+#echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
+#read -p "Press any key to continue..."
+
+binbowstype() {
+    echo " "
+    echo -e "${PREFIX} [1]: Do you want the installer to be able to install Windows on the same drive (at least 32GB)?"
+    echo -e "${PREFIX} [2]: OR create an installation media on this drive (at least 8GB) that's able to install Windows on other drives (at least 16GB)?"
+    read -r -p "[1/2]: " input
+    echo " "
+    case $input in
+        [1])
+        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+        sync
+        diskutil unmountDisk /dev/$disk
+        #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        #read -p "Press any key to continue..."
+        return 0
+        ;;
+        [2])
+        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+        sync
+        diskutil unmountDisk /dev/$disk
+        #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        #read -p "Press any key to continue..."
+        return 0
+        ;;
+        *)
+        echo -e "${PREFIX} Invalid input"
+        return 1
+        ;;
+    esac
+}
+until binbowstype; do : ; done
+
+else
 
 parted -s /dev/$disk mklabel gpt
 parted -s /dev/$disk mkpart primary 1MB 1000MB
@@ -279,14 +371,23 @@ binbowstype() {
 }
 until binbowstype; do : ; done
 
+fi
+
+sync
+sudo mkfs.fat -F 32 /dev/$nisk'1'
+sync
+sudo mkfs.exfat /dev/$nisk'2'
 sync
 
-sudo mkfs.fat -F 32 /dev/$disk'1'
-sudo mkfs.ntfs -f /dev/$disk'2'
+mkdir -p /tmp/bootpart /tmp/winpart
 
-mkdir -p /media/bootpart /media/winpart
-mount /dev/$nisk'1' /media/bootpart
-mount /dev/$nisk'2' /media/winpart
+if [[ $MACOS == *"1"* ]]; then
+    diskutil mount -mountPoint /tmp/bootpart /dev/$nisk'1'
+    diskutil mount -mountPoint /tmp/winpart /dev/$nisk'2'
+else
+    mount /dev/$nisk'1' /tmp/bootpart
+    mount /dev/$nisk'2' /tmp/winpart
+fi
 
 echo " "
 echo -e "${PREFIX} Copying Windows files to the drive, this may take a while..."
@@ -294,41 +395,50 @@ echo " "
 echo -e "${PREFIX} *NOTE: 'WARNING: Device write-protected, mounted read-only' is also normal*"
 echo " "
 
-mount $iso /tmp/isomount
-cp -r /tmp/isomount/boot /media/bootpart
-cp -r /tmp/isomount/efi /media/bootpart
-mkdir /media/bootpart/sources
-cp /tmp/isomount/sources/boot.wim /media/bootpart/sources
-
-if [[ $custwim == *"1"* ]]; then
-    cp $wim /media/winpart
+if [[ $MACOS == *"1"* ]]; then
+    hdiutil attach $iso -mountpoint /tmp/isomount -nobrowse
 else
-    cp /tmp/isomount/sources/install.wim /media/winpart
+    mount $iso /tmp/isomount
 fi
 
-umount /tmp/isomount
+cp -r /tmp/isomount/boot /tmp/bootpart
+cp -r /tmp/isomount/efi /tmp/bootpart
+mkdir /tmp/bootpart/sources
+cp /tmp/isomount/sources/boot.wim /tmp/bootpart/sources
+
+if [[ $custwim == *"1"* ]]; then
+    cp $wim /tmp/winpart
+else
+    cp /tmp/isomount/sources/install.wim /tmp/winpart
+fi
+
+if [[ $MACOS == *"1"* ]]; then
+    hdiutil detach /tmp/isomount
+else
+    umount /tmp/isomount
+fi
 
 echo " "
 echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
 echo " "
 
 unzip $efi -d /tmp/uefipackage
-sudo cp /tmp/uefipackage/* /media/bootpart
+sudo cp /tmp/uefipackage/* /tmp/bootpart
 
 echo " "
 echo -e "${PREFIX} Copying the drivers to the drive..."
 echo " "
 
 unzip $driv -d /tmp/driverpackage
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
+wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
 echo " "
 echo -e "${PREFIX} Copying the PE-installer to the drive..."
 echo " "
 
 unzip $inst -d /tmp/peinstaller
-cp -r /tmp/peinstaller/efi /media/bootpart
-wimupdate /media/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
+cp -r /tmp/peinstaller/efi /tmp/bootpart
+wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
 
 echo " "
 echo -e "${PREFIX} *Ignore 'cp: -r not specified; omitting directory...'*"
@@ -351,7 +461,11 @@ echo " "
 echo -e "${PREFIX} *Again, ignore the 'not mounted' errors, they are normal*"
 echo " "
 
-umount /dev/$disk*
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk
+else
+    umount /dev/$disk*
+fi
 
 echo " "
 echo -e "${PREFIX} Cleaning up..."
@@ -360,6 +474,8 @@ rm -rf /tmp/driverpackage
 rm -rf /tmp/uefipackage
 rm -rf /tmp/peinstaller
 rm -rf /tmp/isomount
+rm -rf /tmp/bootpart
+rm -rf /tmp/winpart
 
 if [[ $auto == *"1"* ]]; then
     rm -rf /tmp/UEFI_Firmware.zip
