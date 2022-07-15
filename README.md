@@ -7,7 +7,7 @@ Built for simplicity and compatibility.
 
 Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, dosfstools and exfatprogs.
 
-This script now supports macOS too! (macOS support is currently experimental)
+This script now supports macOS too! (macOS support is currently experimental, use the script in the repo's code section)
  
 Also you can use your own ISO and even a modified install.wim*
 
