@@ -244,6 +244,12 @@ else
     export nisk="$disk"
 fi
 
+if [[ $disk == *"disk"* ]]; then
+    export nisk="${disk}s"
+else
+    export nisk="$disk"
+fi
+
 if [[ $disk == *"/dev"* ]]; then
     echo -e "${PREFIX} DO NOT PUT '/dev', only put the name like 'sdb'"
     exit 1
