@@ -419,11 +419,12 @@ else
 fi
 
 echo " "
-echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
+echo -e "${PREFIX} Copying the PE-installer to the drive..."
 echo " "
 
-unzip $efi -d /tmp/uefipackage
-sudo cp /tmp/uefipackage/* /tmp/bootpart
+unzip $inst -d /tmp/peinstaller
+cp -r /tmp/peinstaller/efi /tmp/bootpart
+wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
 
 echo " "
 echo -e "${PREFIX} Copying the drivers to the drive..."
@@ -433,12 +434,11 @@ unzip $driv -d /tmp/driverpackage
 wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/driverpackage /drivers"
 
 echo " "
-echo -e "${PREFIX} Copying the PE-installer to the drive..."
+echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
 echo " "
 
-unzip $inst -d /tmp/peinstaller
-cp -r /tmp/peinstaller/efi /tmp/bootpart
-wimupdate /tmp/bootpart/sources/boot.wim 2 --command="add /tmp/peinstaller/winpe/2 /"
+unzip $efi -d /tmp/uefipackage
+sudo cp /tmp/uefipackage/* /tmp/bootpart
 
 echo " "
 echo -e "${PREFIX} *Ignore 'cp: -r not specified; omitting directory...'*"
