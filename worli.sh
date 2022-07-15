@@ -11,7 +11,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
     echo " "
     echo -e "${PREFIX} Prerequisites"
     echo -e "${PREFIX} Due to how brew works you need to run these commands in a non root shell:"
-    echo -e "${PREFIX} - 'brew install wimlib gdisk dosfstools'" 
+    echo -e "${PREFIX} - 'brew install wimlib gdisk dosfstools gnu-sed'" 
     echo -e "${PREFIX} - 'brew install --cask macfuse'"
     echo -e "${PREFIX} - 'brew tap gmerlino/exfat'"
     echo -e "${PREFIX} - 'brew install --HEAD exfat'"
@@ -20,6 +20,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   read -p "Press any key to continue..."
   export MACOS=1
   export PATH=$PATH:/usr/local/sbin
+  export PATH="/usr/local/opt/gnu-sed/libexec/gnubin:$PATH"
 else
   export MACOS=0
 fi
@@ -220,7 +221,7 @@ else
 parted -l
 fi
 echo " "
-read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0': " disk
+read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0', 'disk7': " disk
 
 echo -e "${PREFIX} You have selected '$disk', is this correct?"
 read -r -p "[Y/N]: " input
@@ -296,8 +297,8 @@ if [[ $MACOS == *"1"* ]]; then
 
 printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
 sync
-echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
-read -p "Press any key to continue..."
+#echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
+#read -p "Press any key to continue..."
 
 binbowstype() {
     echo " "
@@ -310,16 +311,16 @@ binbowstype() {
         printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         diskutil unmountDisk /dev/$disk
-        echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
-        read -p "Press any key to continue..."
+        #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        #read -p "Press any key to continue..."
         return 0
         ;;
         [2])
         printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         diskutil unmountDisk /dev/$disk
-        echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
-        read -p "Press any key to continue..."
+        #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
+        #read -p "Press any key to continue..."
         return 0
         ;;
         *)
