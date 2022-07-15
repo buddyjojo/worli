@@ -8,35 +8,18 @@ fi
 
 if [[ $OSTYPE == 'darwin'* ]]; then
   echo -e "${PREFIX} macOS detected, running in experimental macOS mode."
-  
-  echo -e "${PREFIX} Do you want to install the depenancies with brew?"
-    read -r -p "[Y/N]: " input
-    case $input in
-    [yY][eE][sS]|[yY])
-    
-    brew install wimlib gdisk 
-    
-    brew install --cask macfuse
-    
-    brew tap gmerlino/exfat
-    
-    brew install --HEAD exfat
-    
-    export PATH=$PATH:/usr/local/sbin
-    
-    ;;
-    [nN][oO]|[nN])
-    echo -e "${PREFIX} Expect probelms."
-    exit 1
-    ;;
-    *)
-    echo -e "${PREFIX} Invalid input"
-    exit 1
-    ;;
-    esac
-
-  echo -e "${PREFIX} You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
+    echo " "
+    echo -e "${PREFIX} Prerequisites"
+    echo -e "${PREFIX} Due to how brew works you need to run these commands in a non root shell:"
+    echo -e "${PREFIX} - 'brew install wimlib gdisk'" 
+    echo -e "${PREFIX} - 'brew install --cask macfuse'"
+    echo -e "${PREFIX} - 'brew tap gmerlino/exfat'"
+    echo -e "${PREFIX} - 'brew install --HEAD exfat'"
+    echo -e "${PREFIX} - You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
+    echo " "
+  read -p "Press any key to continue..."
   export MACOS=1
+  export PATH=$PATH:/usr/local/sbin
 else
   export MACOS=0
 fi
