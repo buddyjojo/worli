@@ -286,7 +286,11 @@ echo " "
 echo -e "${PREFIX} *Ignore the 'not mounted' errors, they are normal*"
 echo " "
 
-umount /dev/$disk*
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk
+else
+    umount /dev/$disk*
+fi
 
 if [[ $MACOS == *"1"* ]]; then
 
@@ -365,17 +369,11 @@ sudo mkfs.exfat /dev/$nisk'2'
 mkdir -p /tmp/bootpart /tmp/winpart
 
 if [[ $MACOS == *"1"* ]]; then
-    if ! command -v gdisk &> /dev/null
-    then
-        mount -t msdos /dev/$nisk'1' /tmp/bootpart
-        mount -t exfat /dev/$nisk'2' /tmp/winpart
-    fi
+    diskutil mount -mountPoint /tmp/bootpart /dev/$nisk'1'
+    diskutil mount -mountPoint /tmp/winpart /dev/$nisk'2'
 else
-    if ! command -v parted &> /dev/null
-    then
-        mount /dev/$nisk'1' /tmp/bootpart
-        mount /dev/$nisk'2' /tmp/winpart
-    fi
+    mount /dev/$nisk'1' /tmp/bootpart
+    mount /dev/$nisk'2' /tmp/winpart
 fi
 
 echo " "
@@ -384,7 +382,12 @@ echo " "
 echo -e "${PREFIX} *NOTE: 'WARNING: Device write-protected, mounted read-only' is also normal*"
 echo " "
 
-mount $iso /tmp/isomount
+if [[ $MACOS == *"1"* ]]; then
+    hdiutil attach $iso -mountpoint /tmp/isomount -nobrowse
+else
+    mount $iso /tmp/isomount
+fi
+
 cp -r /tmp/isomount/boot /tmp/bootpart
 cp -r /tmp/isomount/efi /tmp/bootpart
 mkdir /tmp/bootpart/sources
@@ -396,7 +399,11 @@ else
     cp /tmp/isomount/sources/install.wim /tmp/winpart
 fi
 
-umount /tmp/isomount
+if [[ $MACOS == *"1"* ]]; then
+    hdiutil detach /tmp/isomount
+else
+    umount /tmp/isomount
+fi
 
 echo " "
 echo -e "${PREFIX} Copying the UEFI boot files to the drive..."
@@ -441,7 +448,11 @@ echo " "
 echo -e "${PREFIX} *Again, ignore the 'not mounted' errors, they are normal*"
 echo " "
 
-umount /dev/$disk*
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk
+else
+    umount /dev/$disk*
+fi
 
 echo " "
 echo -e "${PREFIX} Cleaning up..."
