@@ -8,6 +8,33 @@ fi
 
 if [[ $OSTYPE == 'darwin'* ]]; then
   echo -e "${PREFIX} macOS detected, running in experimental macOS mode."
+  
+  echo -e "${PREFIX} Do you want to install the depenancies with brew?"
+    read -r -p "[Y/N]: " input
+    case $input in
+    [yY][eE][sS]|[yY])
+    
+    brew install wimlib gdisk 
+    
+    brew install --cask macfuse
+    
+    brew tap gmerlino/exfat
+    
+    brew install --HEAD exfat
+    
+    export PATH=$PATH:/usr/local/sbin
+    
+    ;;
+    [nN][oO]|[nN])
+    echo -e "${PREFIX} Expect probelms."
+    exit 1
+    ;;
+    *)
+    echo -e "${PREFIX} Invalid input"
+    exit 1
+    ;;
+    esac
+
   echo -e "${PREFIX} You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
   export MACOS=1
 else
@@ -46,7 +73,7 @@ case $input in
 
     if ! command -v wget &> /dev/null
     then
-        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget'; for macOS, 'brew install wget')"
+        echo -e "${PREFIX} - 'wget' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wget'; for Arch, run 'sudo pacman -S wget'; for macOS, run 'brew install wget')"
         exit 1
     fi
 
@@ -127,7 +154,7 @@ echo -e "${PREFIX} - If you're using a Raspberry Pi 4, you must update the Bootl
 echo " "
 if ! command -v wimupdate &> /dev/null
 then
-    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools'; for macOS, run 'brew install wimlib')"
+    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
     exit 1
 fi
 
@@ -145,9 +172,9 @@ else
     fi
 fi
 
-if ! command -v mkfs.ntfs &> /dev/null
+if ! command -v mkfs.exfat &> /dev/null
 then
-    echo -e "${PREFIX} - 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs, for macOS, run 'brew install ntfs-3g')"
+    echo -e "${PREFIX} - 'mkfs.exfat' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install exfatprogs'; For Arch, run 'sudo pacman -S exfatprogs')"
     exit 1
 fi
 
@@ -344,7 +371,7 @@ fi
 sync
 
 sudo mkfs.fat -F 32 /dev/$disk'1'
-sudo mkfs.ntfs -f /dev/$disk'2'
+sudo mkfs.exfat /dev/$disk'2'
 
 mkdir -p /media/bootpart /media/winpart
 mount /dev/$nisk'1' /media/bootpart
