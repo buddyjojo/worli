@@ -5,9 +5,13 @@
 
 Built for simplicity and compatibility.
 
-Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`) and `exfatprogs` (`mkfs.exfat`).
+Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`) and `exfatprogs` (`mkfs.exfat`)
 
-This script now supports macOS too! (macOS support is currently experimental, use the script in the repo's code section)
+(worli-gui requires `zenity`).
+
+This script now supports macOS too! (macOS support is currently experimental)
+
+There's now a zenity based gui too! replace `worli.sh` with `worli-gui.sh` in the guide below to get it.
  
 Also you can use your own ISO and even a modified install.wim*
 
