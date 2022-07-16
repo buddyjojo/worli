@@ -400,8 +400,7 @@ cp /tmp/isomount/sources/boot.wim /tmp/bootpart/sources
 if [[ $custwim == *"1"* ]]; then
     cp $wim /tmp/winpart
 else
-    #cp /tmp/isomount/sources/install.wim /tmp/winpart
-    debug "running in i-am-inpatient-mode"
+    cp /tmp/isomount/sources/install.wim /tmp/winpart
 fi
 
 if [[ $MACOS == *"1"* ]]; then
