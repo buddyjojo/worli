@@ -17,7 +17,7 @@ if [[ $OSTYPE == 'darwin'* ]]; then
     echo -e "${PREFIX} - 'brew install --HEAD exfat'"
     echo -e "${PREFIX} - You may need to disable SIP as stated here: https://www.rodsbooks.com/gdisk/"
     echo " "
-  read -p "Press any key to continue..."
+  read -p "Press enter to continue..."
   export MACOS=1
   export PATH=$PATH:/usr/local/sbin
 else
@@ -48,7 +48,9 @@ esac
 
 echo " "
 echo -e "${PREFIX} Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'N' to use your own files"
-read -r -p "[Y/N]: " input
+export default="Y"
+read -r -p "[n/Y] default: Y: " input
+: ${input:=$default}
 echo " "
 case $input in
 
@@ -62,18 +64,18 @@ case $input in
 
     if [[ $MACOS == *"1"* ]]; then
     efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
-    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download UEFI_Firmware.zip"; exit 1; }
     drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | gsed 's/^.*browser_download_url": "//g' | gsed 's/"$//g')"
-    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download Windows_ARM64_Drivers.zip"; exit 1; }
     peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | gsed 's/^Location: //g' | gsed 's/ \[following\]$//g' | grep 'drive\.google\.com' | gsed 's+.*/++g' | gsed 's/.*&id=//g')"
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | gsed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | gsed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download WoR-PE_Package.zip"; exit 1; }
     else
     efiURL="$(wget -qO- https://api.github.com/repos/pftf/RPi${PI}/releases/latest | grep '"browser_download_url":'".*RPi${PI}_UEFI_Firmware_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
-    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || error "Failed to download UEFI"
+    wget -O "/tmp/UEFI_Firmware.zip" "$efiURL" || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download UEFI_Firmware.zip"; exit 1; }
     drivURL="$(wget -qO- https://api.github.com/repos/worproject/RPi-Windows-Drivers/releases/latest | grep '"browser_download_url":'".*RPi${PI}_Windows_ARM64_Drivers_.*\.zip" | sed 's/^.*browser_download_url": "//g' | sed 's/"$//g')"
-    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || error "Failed to download drivers"
+    wget -O "/tmp/Windows_ARM64_Drivers.zip" "$drivURL" || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download Windows_ARM64_Drivers.zip"; exit 1; }
     peuuid="$(wget --spider --content-disposition --trust-server-names -O /dev/null "https://worproject.com/dldserv/worpe/downloadlatest.php" 2>&1 | grep Location | sed 's/^Location: //g' | sed 's/ \[following\]$//g' | grep 'drive\.google\.com' | sed 's+.*/++g' | sed 's/.*&id=//g')"
-    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt
+    wget --load-cookies /tmp/cookies.txt "https://docs.google.com/uc?export=download&confirm=$(wget --quiet --save-cookies /tmp/cookies.txt --keep-session-cookies --no-check-certificate 'https://docs.google.com/uc?export=download&id='"$peuuid" -O- | sed -rn 's/.*confirm=([0-9A-Za-z_]+).*/\1\n/p')&id=$peuuid" -O "/tmp/WoR-PE_Package.zip" && rm -rf /tmp/cookies.txt || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to download WoR-PE_Package.zip"; exit 1; }
     fi
     
     
@@ -172,7 +174,7 @@ then
 fi
 
 echo -e "${PREFIX} \e[0;31mDO THE PREREQUISITES STUFF BEFORE CONTINUING\e[0m"
-read -p "Press any key to continue..."
+read -p "Press enter to continue..."
 echo " "
 
 echo -e "${PREFIX} What's the path to the 'win.iso'?"
@@ -180,7 +182,9 @@ read -r -p "[/*] E.g. '~/win.iso': " iso
 echo " "
 
 echo -e "${PREFIX} Do you want to use a custom WIM?"
-read -r -p "[N/Y]: " input
+export default="N"
+read -r -p "[N/y] default: N: " input
+: ${input:=$default}
 echo " "
 case $input in
 
@@ -233,7 +237,9 @@ echo " "
 read -r -p "[/dev/*] E.g. 'sdb', 'mmcblk0', 'disk7': " disk
 
 echo -e "${PREFIX} You have selected '$disk', is this correct?"
-read -r -p "[Y/N]: " input
+export default="Y"
+read -r -p "[n/Y] default: Y: " input
+: ${input:=$default}
 case $input in
     [yY][eE][sS]|[yY])
     echo -e "${PREFIX} ok '$disk' it is then"
@@ -307,7 +313,7 @@ if [[ $MACOS == *"1"* ]]; then
 printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
 sync
 #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
-#read -p "Press any key to continue..."
+#read -p "Press enter to continue..."
 
 binbowstype() {
     echo " "
@@ -321,7 +327,7 @@ binbowstype() {
         sync
         diskutil unmountDisk /dev/$disk
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
-        #read -p "Press any key to continue..."
+        #read -p "Press enter to continue..."
         return 0
         ;;
         [2])
@@ -329,7 +335,7 @@ binbowstype() {
         sync
         diskutil unmountDisk /dev/$disk
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
-        #read -p "Press any key to continue..."
+        #read -p "Press enter to continue..."
         return 0
         ;;
         *)
