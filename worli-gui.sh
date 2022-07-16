@@ -215,10 +215,15 @@ if [[ $MACOS == *"1"* ]]; then
 
 fdisk=$(diskutil list | grep disk | grep -v /dev/disk | grep -v disk.*s | grep -v + | cut -d'*' -f2 | gawk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks')
 
+(( $? != 0 )) && exit 1
+
 disk=$(echo $fdisk | grep -o disk.*)
 
 else
 fdisk=$(sudo parted -l | grep "Disk /dev*" | grep -v loop | sort | awk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks')
+
+(( $? != 0 )) && exit 1
+
 sdisk=${fdisk#Disk /dev/*}
 disk="${sdisk%%:*}"
 fi
