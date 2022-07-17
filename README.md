@@ -5,32 +5,32 @@
 
 Built for simplicity and compatibility.
 
-Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`) and `exfatprogs` (`mkfs.exfat`)
+Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`), and `exfatprogs` (`mkfs.exfat`)
 
 (worli-gui requires `zenity`).
 
-This script now supports macOS too! (macOS support is currently experimental)
+This script now supports macOS too! (experimental)
 
-There's now a zenity based gui too! replace `worli.sh` with `worli-gui.sh` in the guide below to get it.
- 
-Also you can use your own ISO and even a modified install.wim*
+There's now a Zenity based GUI too!
 
-*\* A modified install.wim still requires an iso for the boot.wim and boot files*
+Also you can use your own ISO and even a modified `install.wim`*
+
+*\* A modified `install.wim` to still requires an ISO file for the `boot.wim` and boot files*
 
 ## INSTRUCTIONS:
 
-1. Go to "Releases" and download the latest "worli.sh" or use this link: https://github.com/buddyjojo/worli/releases/latest/download/worli.sh
+1. Go to "Releases" and download the latest ["worli.sh"](https://github.com/buddyjojo/worli/releases/latest/download/worli.sh) or ["worli-gui.sh"](https://github.com/buddyjojo/worli/releases/latest/download/worli-gui.sh) of your choice.
 
-  > HELP WANTED: If you have a bit of spare time it would be nice if you try the script in the repo's code section and see if it works, if it does or any problem araises please create an issue or contact me on the discord server.
+  > HELP WANTED: If you have a bit of spare time it would be nice if you try the script in the repo's code section and see if it works, if it does or any problem araises please create an issue or contact me on the Discard severe.
 
-2. Put the script into a empty folder WITH NO SPACES IN ITS NAME!
+2. Put the script into an empty folder **WITH NO SPACES IN ITS NAME**!
 
-3. Open the terminal in that folder and run `chmod +x worli.sh` and then `sudo ./worli.sh` or `sudo bash worli.sh` (in a root shell, just `./worli.sh` or `bash worli.sh`)
+3. Open a terminal in that folder and run `sudo bash worli.sh`, or `chmod +x worli.sh` and then `sudo ./worli.sh` (remove `sudo` if in a root shell)
 
-4. Follow the instructions the script gives
+4. Follow the instructions built-in with the script
 
 ##
 
-##### If you have any problems or suggestions, please create a github issue or tell me in the discord server.
+##### If you have any problems or suggestions, please create a GitHub issue or tell me in our Discard severe.
 
-**Alsor chuck our out [Discard Severe](https://discord.gg/26CMEjQ47g)!**
+**Alsor chuck our out [Discard severe](https://discord.gg/26CMEjQ47g)!**
