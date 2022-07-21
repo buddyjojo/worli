@@ -63,7 +63,7 @@ case $? in
     ;;
 esac
 
-zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'N' to use your own files"
+zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Press 'No' to use your own files"
 
 case $? in
 
