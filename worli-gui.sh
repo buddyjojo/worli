@@ -53,6 +53,7 @@ zenity --question --title="worli" --text "Are you installing onto a Raspberry Pi
 case $? in
     [0])
     export PI="4"
+    zenity --title "worli" --info --ok-label="Next" --text "- If you're using a Raspberry Pi 4, you must update the Bootloader to the latest version: <a href='https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader'>https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader</a>"
     ;;
     [1])
     export PI="3"
@@ -63,7 +64,7 @@ case $? in
     ;;
 esac
 
-zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Press 'No' to use your own files"
+zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'No' to use your own files"
 
 case $? in
 
@@ -171,7 +172,212 @@ else
     debug "All dependances are met!"
 fi
 
-zenity --title "worli" --info --ok-label="Next" --text "Prerequisites\n\n- Get the windows ISO: <a href='https://worproject.com/guides/getting-windows-images'>https://worproject.com/guides/getting-windows-images</a>\n\n- Rename the ISO file to 'win.iso'\n\n- If you want use use a modified install.wim, rename it to 'install.wim'\n NOTE: You will still need the ISO where the WIM came from\n\n- If you're using a Raspberry Pi 4, you must update the Bootloader to the latest version: <a href='https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader'>https://www.raspberrypi.com/documentation/computers/raspberry-pi.html#updating-the-bootloader</a>\n\n<span color=\"red\">DO THE PREREQUISITES BEFORE CONTINUING</span>"
+
+
+zenity --question --title="worli" --text "Do you want this script to generate its own iso with uupdump?"
+
+case $? in
+
+    [0])
+
+if ! command -v jq &> /dev/null
+then
+    jq=" - 'jq' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install jq'; for Arch, run 'sudo pacman -S jq'; for macOS run 'brew install jq')"
+    export requiredep=1
+fi
+    
+if ! command -v aria2c &> /dev/null
+then
+    aria2c=" - 'aria2c' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install aria2'; for Arch, run 'sudo pacman -S aria2'; for macOS run 'brew install aria2')"
+    export requiredep=1
+fi
+
+if ! command -v cabextract &> /dev/null
+then
+    cabextract=" - 'cabextract' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install cabextract'; For Arch, run 'sudo pacman -S cabextract'; for macOS run 'brew install cabextract')"
+    export requiredep=1
+fi
+
+if ! command -v chntpw &> /dev/null
+then
+    chntpw=" - 'chntpw' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install chntpw'; For Arch, run 'sudo pacman -S chntpw'; for macOS run 'brew install sidneys/homebrew/chntpw')"
+    export requiredep=1
+fi
+
+if ! command -v genisoimage &> /dev/null
+then
+    genisoimage=" - 'genisoimage' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
+    export requiredep=1
+fi
+
+if ! command -v mkisofs &> /dev/null
+then
+    mkisofs=" - 'mkisofs' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
+    export requiredep=1
+fi
+
+if [[ $requiredep == *"1"* ]]; then
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$jq\n\n$aria2c\n\n$cabextract\n\n$chntpw\n\n$genisoimage\n\n$mkisofs"
+    exit 1
+else
+    debug "All dependances are met!"
+fi
+    
+zenity --question --title="worli" --text "Do you want to use the latest retail/dev builds or enter your own uupdump.net build id? Press 'No' to use id"
+
+case $? in
+    [1])
+    updateid=$(zenity --title "worli" --entry --text "What's the uupdump.net uuid?\n\n e.g once you select the build you want the id will be in the url like:\n\nhttps://uupdump.net/selectlang.php?id= '6b1e576c-9854-44b4-9cdd-108d13cf0035'")
+    ;;
+    [0])
+    release=$(zenity --list --title="worli" --text="What windows release type do you want?\nnote: defaults to dev" --column 'Release type'  "Latest Public Release build" "Latest Dev Channel build")
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+if [[ $release == "Latest Public Release build" ]]; then
+    export ring="retail&build=19041.1"
+else
+    export ring="wif&build=latest"
+fi
+
+
+apiget=$(curl "https://api.uupdump.net/fetchupd.php?arch=arm64&ring=$ring" | jq -r '.response.updateArray[] | select( .updateTitle | contains("Windows")) | {Id: .updateId, Name: .updateTitle} ')
+
+if [[ $? -ne 0 ]]; then
+    error "Probably got rate limited, please try again"
+else
+    debug "Not null thats good"
+fi
+
+updateid=$(echo $apiget | jq -r .Id)
+
+foundBuild=$(echo $apiget | jq -r .Name)
+
+echo $foundBuild 
+
+zenity --question --title="worli" --text "You are about to download:\n\n'$foundBuild'\n\nIs this ok?"
+
+case $? in
+    [0])
+    debug "ok '$foundBuild' it is then"
+    ;;
+    [1])
+    exit 1
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+langjson=$(curl -sk "https://api.uupdump.net/listlangs.php?id=$updateid" | jq -r '.response.langFancyNames')
+
+var=$(echo "$langjson" | cut -d\" -f4 | tr -d '{}' | tr '\n' '|'); var="${var#?}"; var="${var%?}"; var="${var%?}"
+
+langa=$(zenity --forms --title "worli" --text "language" --add-combo "Choose your language." --combo-values "$var")
+
+if [[ -z "$langa" ]]
+    then error "No language was selected"
+fi 
+
+language=$(echo "$langjson" | grep "$langa" | cut -d\" -f2)
+
+debug "language is $language"
+
+zenity --question --title="worli" --text "Do you want to download and generate the iso in the current directory or in /tmp?\nnote: the tmp directory may not be big enough and the iso and uup files will get deleted when the script finishes"
+
+case $? in
+    [0])
+    uuproot="$(pwd)"
+    ;;
+    [1])
+    mkdir /tmp/tmpuup
+    uuproot=/tmp/tmpuup
+    export tmpuup=1
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+wget -O "/tmp/UUP.zip" "https://uupdump.net/get.php?id=$updateid&pack=en-us&edition=professional&autodl=2" || error "Failed to download UUP.zip"
+
+export uupzip=1
+
+unzip "/tmp/UUP.zip" -d "$uuproot/uup"
+
+zenity --question --title="worli" --text "uupdump is known to be unstable sometimes and may require multiple tries to sucessfully download all reqired files.\n\nto combat this, do you want to enable auto retry? It will indefinitely rerun the uup script until it suceeds.\n\nyou can stop this any time by pressing the cancel button on the 'progress' window or by ctrl+c'ing the terminal this script is running from"
+
+case $? in
+    [0])
+    export autoretry=1
+    export counter=1
+    ;;
+    [1])
+    export autoretry=0
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+
+zenity --title "worli" --info --ok-label="Continue" --text "The uupdump script will now be executed\nIts output will be in the terminal where this script was ran"
+
+cd $uuproot/uup
+
+chmod +x uup_download_linux.sh
+
+isogen() {
+ ./uup_download_linux.sh >&2
+}
+
+(
+
+isogen
+if [[ $? -ne 0 ]]; then
+    if [[ $autoretry == *"1"* ]]; then
+    echo "# auto retry enabled, current amount of attempts: $counter"
+    sleep 5
+    isogen
+    while [ $? -ne 0 ]; do
+        counter=$(( counter + 1 ))
+        echo "# auto retry enabled, current amount of attempts: $counter"
+        sleep 5
+        isogen
+    done
+    else
+    error "auto retry disabled, quitting scritpt"
+    fi
+else
+    zenity --title "worli" --info --ok-label="Continue" --text "The uupdump script suceeded!"
+fi
+
+) |
+zenity --progress \
+  --title="worli" \
+  --text="Generating iso...." \
+  --pulsate \
+  --auto-close
+  
+(( $? != 0 )) && exit 1 
+
+cd ../
+
+if [ -f "$uuproot/uup/"*ARM64*.ISO ]; then
+    debug "iso found"
+    iso=$(find $uuproot/uup/ -name "*ARM64*.ISO")
+else
+    error "iso not found."
+fi
+
+    ;;
+
+    [1])
+
+zenity --title "worli" --info --ok-label="Next" --text "Prerequisites\n\n- Get the windows ISO: <a href='https://worproject.com/guides/getting-windows-images'>https://worproject.com/guides/getting-windows-images</a>\n\n- Rename the ISO file to 'win.iso'\n\n- If you want use use a modified install.wim, rename it to 'install.wim'\n NOTE: You will still need the ISO where the WIM came from\n\n<span color=\"red\">DO THE PREREQUISITES BEFORE CONTINUING</span>"
 
 iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso'?\n\n E.g. '~/win.iso'")
 
@@ -203,12 +409,20 @@ case $? in
     exit 1
     ;;
 esac
+    ;;
 
-echo " "
+    *)
+
+    error "Invalid input"
+    exit 1
+    ;;
+esac
+
+
 if [ -f $iso ]; then
     debug "'win.iso' found"
 else
-    error "'win.iso' does not exist."
+    error "'win.iso' does not exist. iso veriable was set to '$iso'"
 fi
 
 if [[ $MACOS == *"1"* ]]; then
@@ -466,6 +680,18 @@ if [[ $auto == *"1"* ]]; then
     rm -rf /tmp/WoR-PE_Package.zip
 else
     debug "No need to clear downloaded files"
+fi
+
+if [[ $tmpuup == *"1"* ]]; then
+    rm -rf /tmp/tmpuup
+else
+    debug "No need to clear tmp uup"
+fi
+
+if [[ $uupzip == *"1"* ]]; then
+    rm -rf /tmp/UUP.zip
+else
+    debug "No need to clear uup zip"
 fi
 
 echo "100"
