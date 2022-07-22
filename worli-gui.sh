@@ -204,15 +204,9 @@ then
     export requiredep=1
 fi
 
-if ! command -v genisoimage &> /dev/null
+if ! command -v mkisofs &> /dev/null && ! command -v genisoimage >/dev/null
 then
-    genisoimage=" - 'genisoimage' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
-    export requiredep=1
-fi
-
-if ! command -v mkisofs &> /dev/null
-then
-    mkisofs=" - 'mkisofs' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
+    mkisofs=" - 'genisoimage or mkisofs' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
     export requiredep=1
 fi
 
