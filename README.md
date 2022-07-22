@@ -13,6 +13,8 @@ This script now supports macOS too! (experimental)
 
 There's now a Zenity based GUI too!
 
+worli-gui now has uupdump ISO creation support (also a bit experimental)
+
 Also you can use your own ISO and even a modified `install.wim`*
 
 *\* A modified `install.wim` to still requires an ISO file for the `boot.wim` and boot files*
