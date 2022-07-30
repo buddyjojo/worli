@@ -222,35 +222,44 @@ zenity --question --title="worli" --text "Do you want to use the latest retail/d
 case $? in
     [1])
     updateid=$(zenity --title "worli" --entry --text "What's the uupdump.net uuid?\n\n e.g once you select the build you want the id will be in the url like:\n\nhttps://uupdump.net/selectlang.php?id= '6b1e576c-9854-44b4-9cdd-108d13cf0035'")
+    
+    foundBuild=$(curl -sk "https://api.uupdump.net/listlangs.php?id=$updateid" | jq -r '.response.updateInfo.title')
+    
+    if [[ $? -ne 0 ]]; then
+        error "Got rate limited or id is incrorrect, please try again"
+    else
+        debug "Not null thats good"
+    fi
+    
     ;;
     [0])
     release=$(zenity --list --title="worli" --text="What windows release type do you want?\nnote: defaults to dev" --column 'Release type'  "Latest Public Release build" "Latest Dev Channel build")
+    
+    
+    if [[ $release == "Latest Public Release build" ]]; then
+        export ring="retail&build=19041.1"
+    else
+        export ring="wif&build=latest"
+    fi
+    
+    apiget=$(curl "https://api.uupdump.net/fetchupd.php?arch=arm64&ring=$ring" | jq -r '.response.updateArray[] | select( .updateTitle | contains("Windows")) | {Id: .updateId, Name: .updateTitle} ')
+    
+    if [[ $? -ne 0 ]]; then
+        error "Probably got rate limited, please try again"
+    else
+        debug "Not null thats good"
+    fi
+
+    updateid=$(echo $apiget | jq -r .Id)
+
+    foundBuild=$(echo $apiget | jq -r .Name)
     ;;
     *)
     exit 1
     ;;
 esac
 
-if [[ $release == "Latest Public Release build" ]]; then
-    export ring="retail&build=19041.1"
-else
-    export ring="wif&build=latest"
-fi
-
-
-apiget=$(curl "https://api.uupdump.net/fetchupd.php?arch=arm64&ring=$ring" | jq -r '.response.updateArray[] | select( .updateTitle | contains("Windows")) | {Id: .updateId, Name: .updateTitle} ')
-
-if [[ $? -ne 0 ]]; then
-    error "Probably got rate limited, please try again"
-else
-    debug "Not null thats good"
-fi
-
-updateid=$(echo $apiget | jq -r .Id)
-
-foundBuild=$(echo $apiget | jq -r .Name)
-
-echo $foundBuild 
+debug $foundBuild 
 
 zenity --question --title="worli" --text "You are about to download:\n\n'$foundBuild'\n\nIs this ok?"
 
@@ -267,6 +276,12 @@ case $? in
 esac
 
 langjson=$(curl -sk "https://api.uupdump.net/listlangs.php?id=$updateid" | jq -r '.response.langFancyNames')
+
+if [[ $? -ne 0 ]]; then
+    error "Probably got rate limited, please try again"
+else
+    debug "Not null thats good"
+fi
 
 var=$(echo "$langjson" | cut -d\" -f4 | tr -d '{}' | tr '\n' '|'); var="${var#?}"; var="${var%?}"; var="${var%?}"
 
