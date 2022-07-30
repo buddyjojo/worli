@@ -280,21 +280,26 @@ language=$(echo "$langjson" | grep "$langa" | cut -d\" -f2)
 
 debug "language is $language"
 
-zenity --question --title="worli" --text "Do you want to download and generate the iso in the current directory or in /tmp?\nnote: the tmp directory may not be big enough and the iso and uup files will get deleted when the script finishes"
+tmpuupvar=$(zenity --question --title="worli" --text "Do you want the iso to be deleted when the script finishes?\n\nnote: the uup files and iso will be put in the current directory ($PWD/uup)\n\nnote: the /tmp option is not recommended as /tmp can be too small to fit the files needed (4gb+)\n\nnote: the /tmp option will delete the iso when the script finishes" --extra-button "generate iso in /tmp")
 
 case $? in
     [0])
     uuproot="$(pwd)"
+    export deluup=1
     ;;
     [1])
-    mkdir /tmp/tmpuup
-    uuproot=/tmp/tmpuup
-    export tmpuup=1
+    uuproot="$(pwd)"
     ;;
     *)
     exit 1
     ;;
 esac
+
+if [[ $tmpuupvar == "generate iso in /tmp" ]]; then
+    mkdir /tmp/tmpuup
+    uuproot=/tmp/tmpuup
+    export tmpuup=1
+fi
 
 wget -O "/tmp/UUP.zip" "https://uupdump.net/get.php?id=$updateid&pack=en-us&edition=professional&autodl=2" || error "Failed to download UUP.zip"
 
@@ -680,6 +685,12 @@ if [[ $tmpuup == *"1"* ]]; then
     rm -rf /tmp/tmpuup
 else
     debug "No need to clear tmp uup"
+fi
+
+if [[ $deluup == *"1"* ]]; then
+    rm -rf $uuproot/uup
+else
+    debug "uups set to not be deleted"
 fi
 
 if [[ $uupzip == *"1"* ]]; then
