@@ -381,9 +381,9 @@ until binbowstype; do : ; done
 fi
 
 sync
-sudo mkfs.fat -F 32 /dev/$nisk'1'
+mkfs.fat -F 32 /dev/$nisk'1'
 sync
-sudo mkfs.exfat /dev/$nisk'2'
+mkfs.exfat /dev/$nisk'2'
 sync
 
 mkdir -p /tmp/bootpart /tmp/winpart
