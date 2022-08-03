@@ -324,7 +324,6 @@ binbowstype() {
     echo " "
     case $input in
         [1])
-        sleep 5
         printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
         sync
         diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
@@ -333,7 +332,6 @@ binbowstype() {
         return 0
         ;;
         [2])
-        sleep 5
         printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
         sync
         diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
