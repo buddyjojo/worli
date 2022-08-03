@@ -64,7 +64,7 @@ case $? in
     ;;
 esac
 
-zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Say 'No' to use your own files"
+zenity --question --title="worli" --text "Do you want the tool to download the UEFI, drivers, and PE-installer automatically? Press 'No' to use your own files"
 
 case $? in
 
@@ -172,9 +172,7 @@ else
     debug "All dependances are met!"
 fi
 
-
-
-zenity --question --title="worli" --text "Do you want this script to generate its own iso with uupdump?"
+zenity --question --title="worli" --text "Do you want this script to generate its own iso with uupdump? (press No to use your own iso or a previously generated one)"
 
 case $? in
 
@@ -400,10 +398,27 @@ fi
 
 zenity --title "worli" --info --ok-label="Next" --text "Prerequisites\n\n- Get the windows ISO: <a href='https://worproject.com/guides/getting-windows-images'>https://worproject.com/guides/getting-windows-images</a>\n\n- Rename the ISO file to 'win.iso'\n\n- If you want use use a modified install.wim, rename it to 'install.wim'\n NOTE: You will still need the ISO where the WIM came from\n\n<span color=\"red\">DO THE PREREQUISITES BEFORE CONTINUING</span>"
 
+if [[ -f $(find $(pwd)/uup/ -name "*ARM64*.ISO") ]] || [[ -f $(find /tmp/uup -name "*ARM64*.ISO") ]] ; then
+
+zenity --question --title="worli" --text "Previously generated iso found, would you like to use that or use another one?"
+
+case $? in
+    [0])
+    iso=$(find $(pwd)/uup/ -name "*ARM64*.ISO") || iso=$(find /tmp/uup -name "*ARM64*.ISO")
+    ;;
+    [1])
+    iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso'?\n\n E.g. '~/win.iso'")
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+else
+
 iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso'?\n\n E.g. '~/win.iso'")
 
-
-zenity --question --title="worli" --text "Do you want to use a custom WIM?" --ok-label="No" --cancel-label="Yes"
+fi
 
 case $? in
 
