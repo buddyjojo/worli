@@ -382,11 +382,11 @@ until binbowstype; do : ; done
 
 fi
 
-sleep 5
 sync
+diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
 mkfs.fat -F 32 /dev/$nisk'1' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
-sleep 5
+diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
 mkfs.exfat /dev/$nisk'2' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
 
