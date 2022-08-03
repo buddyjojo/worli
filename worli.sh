@@ -312,6 +312,7 @@ if [[ $MACOS == *"1"* ]]; then
 
 printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
 sync
+diskutil unmountDisk /dev/$disk
 #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
 #read -p "Press enter to continue..."
 
