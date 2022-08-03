@@ -303,16 +303,16 @@ echo -e "${PREFIX} *Ignore the 'not mounted' errors, they are normal*"
 echo " "
 
 if [[ $MACOS == *"1"* ]]; then
-    diskutil unmountDisk /dev/$disk
+    diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
 else
     umount /dev/$disk*
 fi
 
 if [[ $MACOS == *"1"* ]]; then
 
-printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
 sync
-diskutil unmountDisk /dev/$disk
+diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
 #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
 #read -p "Press enter to continue..."
 
@@ -325,18 +325,18 @@ binbowstype() {
     case $input in
         [1])
         sleep 5
-        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
         sync
-        diskutil unmountDisk /dev/$disk
+        diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         #read -p "Press enter to continue..."
         return 0
         ;;
         [2])
         sleep 5
-        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
+        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
         sync
-        diskutil unmountDisk /dev/$disk
+        diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         #read -p "Press enter to continue..."
         return 0
@@ -384,17 +384,17 @@ fi
 
 sleep 5
 sync
-mkfs.fat -F 32 /dev/$nisk'1'
+mkfs.fat -F 32 /dev/$nisk'1' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
 sleep 5
-mkfs.exfat /dev/$nisk'2'
+mkfs.exfat /dev/$nisk'2' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
 
 mkdir -p /tmp/bootpart /tmp/winpart
 
 if [[ $MACOS == *"1"* ]]; then
-    diskutil mount -mountPoint /tmp/bootpart /dev/$nisk'1'
-    diskutil mount -mountPoint /tmp/winpart /dev/$nisk'2'
+    diskutil mount -mountPoint /tmp/bootpart /dev/$nisk'1' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to mount disk"; exit 1; }
+    diskutil mount -mountPoint /tmp/winpart /dev/$nisk'2' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to mount disk"; exit 1; }
 else
     mount /dev/$nisk'1' /tmp/bootpart
     mount /dev/$nisk'2' /tmp/winpart
