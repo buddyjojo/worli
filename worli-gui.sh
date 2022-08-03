@@ -218,7 +218,7 @@ then
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debaian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc\n\nFor macOS run 'brew install $jqp $aria2p $cabextractp $chntpwmac $mkisofsarmc'"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debaian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc\n\nFor macOS run 'brew install $jqp $aria2p $cabextractp $chntpwmac $mkisofsarmc\n\nnote: if your on macos and the build for 'sidneys/homebrew/chntpw' fails try running 'brew install minacle/chntpw/chntpw'"
     exit 1
 else
     debug "All dependances are met!"
