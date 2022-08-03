@@ -381,10 +381,14 @@ until binbowstype; do : ; done
 fi
 
 sync
-diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+fi
 mkfs.fat -F 32 /dev/$nisk'1' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
-diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+if [[ $MACOS == *"1"* ]]; then
+    diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+fi
 mkfs.exfat /dev/$nisk'2' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
 sync
 
