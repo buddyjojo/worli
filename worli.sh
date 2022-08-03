@@ -324,6 +324,7 @@ binbowstype() {
     echo " "
     case $input in
         [1])
+        sleep 5
         printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         diskutil unmountDisk /dev/$disk
@@ -332,6 +333,7 @@ binbowstype() {
         return 0
         ;;
         [2])
+        sleep 5
         printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk
         sync
         diskutil unmountDisk /dev/$disk
