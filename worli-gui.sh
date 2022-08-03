@@ -443,7 +443,7 @@ disko () {
 
 if [[ $MACOS == *"1"* ]]; then
 
-fdisk=$(diskutil list | grep disk | grep -v /dev/disk | grep -v disk.*s | grep -v + | cut -d'*' -f2 | gawk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks' --extra-button "Rescan")
+export fdisk=$(diskutil list | grep disk | grep -v /dev/disk | grep -v disk.*s | grep -v + | cut -d'*' -f2 | gawk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks' --extra-button "Rescan")
 
 (( $? != 0 )) && exit 1
 
