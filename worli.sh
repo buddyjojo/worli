@@ -382,9 +382,11 @@ until binbowstype; do : ; done
 
 fi
 
+sleep 5
 sync
 mkfs.fat -F 32 /dev/$nisk'1'
 sync
+sleep 5
 mkfs.exfat /dev/$nisk'2'
 sync
 
