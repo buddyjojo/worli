@@ -21,7 +21,7 @@ error() {
 }
 
 if [[ $OSTYPE == 'darwin'* ]]; then
-  zenity --title "worli" --info --ok-label="Next" --text "macOS detected, running in experimental macOS mode.\n\n Prerequisites\n Due to how brew works you need to run these commands in a non root shell:\n - 'brew install wimlib gdisk dosfstools gnu-sed gawk'\n - 'brew install --cask macfuse'\n - 'brew tap gmerlino/exfat'\n - 'brew install --HEAD exfat'\n - You may need to disable SIP as stated <a href='https://www.rodsbooks.com/gdisk/'>here</a>"
+  zenity --title "worli" --info --ok-label="Next" --text "macOS detected, running in experimental macOS mode.\n\n Prerequisites\n Due to how brew works you need to run these commands in a non root shell:\n - 'brew install wimlib gdisk dosfstools gnu-sed gawk'\n - 'brew install --cask macfuse'\n - 'brew install --HEAD gmerlino/exfat/exfat'\n - You may need to disable SIP as stated <a href='https://www.rodsbooks.com/gdisk/'>here</a>"
   
   if ! command -v gdisk &> /dev/null
   then
@@ -182,36 +182,43 @@ case $? in
 
 if ! command -v jq &> /dev/null
 then
-    jq=" - 'jq' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install jq'; for Arch, run 'sudo pacman -S jq'; for macOS run 'brew install jq')"
+    jq=" - 'jq' command not found."
+    jqp="jq"
     export requiredep=1
 fi
     
 if ! command -v aria2c &> /dev/null
 then
-    aria2c=" - 'aria2c' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install aria2'; for Arch, run 'sudo pacman -S aria2'; for macOS run 'brew install aria2')"
+    aria2c=" - 'aria2c' command not found."
+    aria2p="aria2"
     export requiredep=1
 fi
 
 if ! command -v cabextract &> /dev/null
 then
-    cabextract=" - 'cabextract' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install cabextract'; For Arch, run 'sudo pacman -S cabextract'; for macOS run 'brew install cabextract')"
+    cabextract=" - 'cabextract' command not found."
+    cabextractp="cabextract"
     export requiredep=1
 fi
 
 if ! command -v chntpw &> /dev/null
 then
-    chntpw=" - 'chntpw' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install chntpw'; For Arch, run 'sudo pacman -S chntpw'; for macOS run 'brew install sidneys/homebrew/chntpw')"
+    chntpw=" - 'chntpw' command not found."
+    chntpwp="chntpw"
+    chntpwmac="sidneys/homebrew/chntpw"
     export requiredep=1
 fi
 
 if ! command -v mkisofs &> /dev/null && ! command -v genisoimage &> /dev/null
 then
-    mkisofs=" - 'genisoimage or mkisofs' command not found. Install it (For Debaian and Ubuntu, run 'sudo apt install genisoimage'; For Arch, run 'sudo pacman -S cdrtools'; for macOS run 'brew install cdrtools')"
+    mkisofs=" - 'genisoimage or mkisofs' command not found."
+    mkisofsarmc="cdrtools"
+    mkisofsdeb="genisoimage"
     export requiredep=1
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$jq\n\n$aria2c\n\n$cabextract\n\n$chntpw\n\n$genisoimage\n\n$mkisofs"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$genisoimage\n$mkisofs\n\ninstall them:\n\nFor Debaian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc\n\nFor macOS run 'brew install $jqp $aria2p $cabextractp $chntpwmac $mkisofsarmc'"
     exit 1
 else
     debug "All dependances are met!"
