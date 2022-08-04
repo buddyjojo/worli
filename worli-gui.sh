@@ -555,9 +555,9 @@ fi
 
 if [[ $MACOS == *"1"* ]]; then
 
-printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
+printf "o\nY\nn\n1\n\n+1000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || error "Failed to partition disk"
 sync
-diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+diskutil unmountDisk /dev/$disk || error "Failed to unmount disk"
 #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Due to macOS weirdness you need to disconnect and reconnect the drive now"
 #read -p "Press enter to continue..."
 
@@ -567,18 +567,18 @@ binbowstype() {
     zenity --question --title="worli" --text "[1]: Do you want the installer to be able to install Windows on the same drive (at least 32GB)?\n\n[2]: OR create an installation media on this drive (at least 8GB) that's able to install Windows on other drives (at least 16GB)?" --ok-label="1" --cancel-label="2"
     case $? in
         [0])
-        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
+        printf "n\n2\n\n+19000M\n0700\nw\nY\n" | sudo gdisk /dev/$disk || error "Failed to partition disk"
         sync
-        diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+        diskutil unmountDisk /dev/$disk || error "Failed to unmount disk"
         echo "20"
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         #read -p "Press enter to continue..."
         return 0
         ;;
         [1])
-        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to partition disk"; exit 1; }
+        printf "n\n2\n\n\n0700\nw\nY\n" | sudo gdisk /dev/$disk || error "Failed to partition disk"
         sync
-        diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+        diskutil unmountDisk /dev/$disk || error "Failed to unmount disk"
         echo "20"
         #echo -e "${PREFIX} \e[0;31mNOTE:\e[0m Again, due to macOS weirdness you need to disconnect and reconnect the drive now"
         #read -p "Press enter to continue..."
@@ -627,14 +627,14 @@ fi
 
 sync
 if [[ $MACOS == *"1"* ]]; then
-    diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+    diskutil unmountDisk /dev/$disk || error "Failed to unmount disk"
 fi
-mkfs.fat -F 32 /dev/$nisk'1' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
+mkfs.fat -F 32 /dev/$nisk'1' || error "Failed to format disk"
 sync
 if [[ $MACOS == *"1"* ]]; then
-    diskutil unmountDisk /dev/$disk || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to unmount disk"; exit 1; }
+    diskutil unmountDisk /dev/$disk || error "Failed to unmount disk"
 fi
-mkfs.exfat /dev/$nisk'2' || { echo -e "${PREFIX} \e[0;31mERROR:\e[0m Failed to format disk"; exit 1; }
+mkfs.exfat /dev/$nisk'2' || error "Failed to format disk"
 sync
 echo "30"
 
