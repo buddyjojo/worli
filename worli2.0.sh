@@ -70,9 +70,9 @@ case $? in
     wget -O "/tmp/worli/bootaa64.efi" "https://github.com/pbatard/uefi-ntfs/releases/latest/download/bootaa64.efi" || error "Failed to download bootaa64.efi from pbatard/uefi-ntfs"
     wget -O "/tmp/worli/ntfs_aa64.efi" "https://github.com/pbatard/ntfs-3g/releases/latest/download/ntfs_aa64.efi" || error "Failed to download ntfs_aa64.efi from pbatard/ntfs-3g"
     
-    wget -O "/tmp/worli/worlipe.cmd" "https://cdn.discordapp.com/attachments/546129764440604705/1023817370172669962/worlipe.cmd" || error "Failed to download worlipe.cmd"
-    wget -O "/tmp/worli/batchexec.exe" "https://cdn.discordapp.com/attachments/546129764440604705/1023817369451233310/batchexe.exe" || error "Failed to download batchexec.exe"
-    wget -O "/tmp/worli/BCD" "https://cdn.discordapp.com/attachments/546129764440604705/1023817369866481724/BCD" || error "Failed to download Windows_ARM64_Drivers.zip"
+    wget -O "/tmp/worli/worlipe.cmd" "https://github.com/buddyjojo/worli/raw/worli2.0/files/worlipe.cmd" || error "Failed to download worlipe.cmd"
+    wget -O "/tmp/worli/batchexec.exe" "https://github.com/buddyjojo/worli/raw/worli2.0/files/batchexe.exe" || error "Failed to download batchexec.exe"
+    wget -O "/tmp/worli/BCD" "https://github.com/buddyjojo/worli/raw/worli2.0/files/BCD" || error "Failed to download Windows_ARM64_Drivers.zip"
     
     export efi="/tmp/worli/UEFI_Firmware.zip"
     export driv="/tmp/worli/Windows_ARM64_Drivers.zip"
@@ -83,6 +83,13 @@ case $? in
     export pei="/tmp/worli/worlipe.cmd"
     export bexec="/tmp/worli/batchexec.exe"
     export bcd="/tmp/worli/BCD"
+    
+    if [[ $PI == *"3"* ]]; then
+        wget -O "/tmp/worli/gptpatch.img" "https://github.com/buddyjojo/worli/raw/worli2.0/files/gptpatch.img" || error "Failed to download gptpatch.img"
+        export gptpatch="/tmp/worli/gptpatch.img"
+    else
+        debug "Installing to Pi 4, no need for gptpatch"
+    fi
     
     export auto="1"
     ;;
