@@ -72,7 +72,7 @@ case $? in
     
     wget -O "/tmp/worli/worlipe.cmd" "https://github.com/buddyjojo/worli/raw/worli2.0/files/worlipe.cmd" || error "Failed to download worlipe.cmd"
     wget -O "/tmp/worli/batchexec.exe" "https://github.com/buddyjojo/worli/raw/worli2.0/files/batchexe.exe" || error "Failed to download batchexec.exe"
-    wget -O "/tmp/worli/BCD" "https://github.com/buddyjojo/worli/raw/worli2.0/files/BCD" || error "Failed to download Windows_ARM64_Drivers.zip"
+    wget -O "/tmp/worli/BCD" "https://github.com/buddyjojo/worli/raw/worli2.0/files/BCD" || error "Failed to download the BCD"
     
     export efi="/tmp/worli/UEFI_Firmware.zip"
     export driv="/tmp/worli/Windows_ARM64_Drivers.zip"
