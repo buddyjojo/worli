@@ -26,7 +26,7 @@ Also you can use your own ISO and even a modified `install.wim`
 ## Tip
 
 If you do not care about the windows recovery enviroment and want a quicker deployment (it takes a bit to unpack and repack the wim), grab the `worlipe-no-re.cmd` from the files directory in this repo and edit line 83 of `worli2.0.sh` (pei="/tmp/worli/worlipe.cmd") to the path of the previously downloaded cmd script.
-This is not neccicary if using the manual download option (duh).
+This is not necessary if using the manual download option, just specify the other script when prompted (duh). 
 
 ##### If you have any problems or suggestions, please create a GitHub issue or tell me in our Discard severe.
 
