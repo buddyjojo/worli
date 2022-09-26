@@ -1,4 +1,7 @@
 # worli
+
+## NOTE: there's a new and quicker version for linux ["HERE"](https://github.com/buddyjojo/worli/tree/worli2.0)
+
 <img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="128" height="128">
 
 ### Simple WoR on Linux Installer.
