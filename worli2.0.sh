@@ -80,7 +80,7 @@ case $? in
     export uefntf="/tmp/worli/bootaa64.efi"
     export uefntfd="/tmp/worli/ntfs_aa64.efi"
     
-    export pei="/tmp/worli/worlipe.cmd"
+    export pei="/tmp/worli/worlipe.cmd" #this line
     export bexec="/tmp/worli/batchexec.exe"
     export bcd="/tmp/worli/BCD"
     
