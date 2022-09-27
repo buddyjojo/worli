@@ -5,7 +5,7 @@
 
 Built for simplicity and compatibility.
 
-Unlike Botspot's wor-flasher that only works on Debian, is a bit bloated and uses an older slower method of deployment, this script is meant to be more simpler (and quicker!) and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `zenity`, `wimlib`, `parted`, `dosfstools` (`mkfs.fat`), and NTFS support (`mkfs.ntfs` command)
+Unlike Botspot's wor-flasher that only works on Debian, is a bit bloated and uses an older slower method of deployment, this script is meant to be more simpler (and quicker!) and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `zenity`, `wimlib`, `parted`, `dosfstools` (`mkfs.fat`), and NTFS support (NTFS read and write support and `mkfs.ntfs` command)
 
 **NOTE**: This version can't and may never work on Macos due to the fact ntfs is required. please use the [old branch](https://github.com/buddyjojo/worli/tree/main) instead.
 
