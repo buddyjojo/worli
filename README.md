@@ -25,7 +25,7 @@ Also you can use your own ISO and even a modified `install.wim`
 
 ## Full dependency list
 
-Required dependencies: `zenity`, `wimupdate` and `wimapply` ([wimlib](https://wimlib.net/)), `parted`, `mk.ntfs` ([ntfs-3g/ntfsprogs](https://github.com/tuxera/ntfs-3g)).
+Required dependencies: `zenity`, `wimupdate` and `wimapply` ([wimlib](https://wimlib.net/)), `parted`, `mk.ntfs` ([ntfs-3g/ntfsprogs](https://github.com/tuxera/ntfs-3g)), `zip`.
 
 Dependencies required for auto file download: `wget`, `jq`.
 
