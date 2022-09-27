@@ -23,6 +23,15 @@ Also you can use your own ISO and even a modified `install.wim`
 
 ##
 
+## Full dependency list
+
+Required dependencies: `zenity`, `wimupdate` and `wimapply` ([wimlib](https://wimlib.net/)), `parted`, `mk.ntfs` ([ntfs-3g/ntfsprogs](https://github.com/tuxera/ntfs-3g)).
+
+Dependencies required for auto file download: `wget`, `jq`.
+
+Dependencies required for audo iso generation: `jq`, `aria2c`, `cabextract`, `chntpw`, `mkisofs` or `genisoimage`.
+##
+
 ## Tip
 
 If you do not care about the windows recovery enviroment and want a quicker deployment (it takes a bit to unpack and repack the wim), grab the `worlipe-no-re.cmd` from the files directory in this repo and edit line 83 of `worli2.0.sh` (pei="/tmp/worli/worlipe.cmd") to the path of the previously downloaded cmd script.
