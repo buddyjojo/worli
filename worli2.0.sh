@@ -204,6 +204,12 @@ then
     export requiredep=1
 fi
 
+if ! command -v gawk &> /dev/null
+then
+    exfat=" - 'gawk' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install gawk'; for Arch, run 'sudo pacman -S gawk')"
+    export requiredep=1
+fi
+
 if [[ $requiredep == *"1"* ]]; then
     zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$wimtool\n\n$parted\n\n$exfat"
     exit 1
@@ -484,7 +490,7 @@ fi
 
 disko () {
 
-export fdisk=$(sudo parted -l | grep "Disk /dev*" | grep -v loop | sort | awk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks' --extra-button "Rescan")
+export fdisk=$(parted -l | grep "Disk /dev*" | grep -v loop | sort | gawk '{ printf "FALSE""\0"$0"\0" }' | xargs -0 zenity --list --title="worli" --text="What /dev/* is your drive?" --radiolist --multiple --column ' ' --column 'Disks' --extra-button "Rescan")
 
 (( $? != 0 )) && exit 1
 
