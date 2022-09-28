@@ -206,12 +206,12 @@ fi
 
 if ! command -v gawk &> /dev/null
 then
-    exfat=" - 'gawk' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install gawk'; for Arch, run 'sudo pacman -S gawk')"
+    gawk=" - 'gawk' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install gawk'; for Arch, run 'sudo pacman -S gawk')"
     export requiredep=1
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$wimtool\n\n$parted\n\n$exfat"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$wimtool\n\n$parted\n\n$exfat\n\n$gawk"
     exit 1
 else
     debug "All dependances are met!"
