@@ -1,32 +1,35 @@
 # worli
 
-## NOTE: there's a new and quicker version for linux ["HERE"](https://github.com/buddyjojo/worli/tree/worli2.0)
-
 <img src="https://user-images.githubusercontent.com/76966404/138036784-79d9e23f-7eae-414c-904e-9c8883382bed.png" alt="alt text" title="logo made by fengzi" width="128" height="128">
 
-### Simple WoR on Linux Installer.
+### Simple WoR on Linux Installer. 
 
 Built for simplicity and compatibility.
 
-Unlike Botspot's wor-flasher that only works on Debian and is a bit bloated, this script is meant to be more simpler and work on any distro with bash (or potentially bash compatible, e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`), and `exfatprogs` (`mkfs.exfat`)
+## INFORMATION
 
-(worli-gui requires `zenity`).
+#### Feature comparison:
 
-This script now supports macOS too! (experimental)
+| Feature | worli (2.x) | worli (1.4) | worli-gui (1.4) | wor-flasher |
+| --- | --- | --- | --- | --- |
+| Flashes WoR | ✅ | ✅ | ✅ | ✅ |
+| Installation Speed | Fast[^1] | Normal | Normal | Normal |
+| Distro Support | Any[^2] | Any[^2] | Any[^2] | Debian-based |
+| macOS Support | ❌ | ✅ | ✅ | ❌ |
+| Graphical Interface | ✅[^3] | ❌ | ✅[^3] | ✅ |
+| UUP Dump Integration | ✅ | ❌ | ✅ | ✅ |
+| Custom WIM Support[^4] | ✅ | ❌ | ❌ | ❌ |
 
-There's now a Zenity based GUI too!
+[^1]: Performance gain depends on the hardware setup (largely storage device)
+[^2]: Any distro with support for bash or potentially bash compatible shells (e.g. `zsh`), `wimlib`, `parted`, `dosfstools` (`mkfs.fat`), and `exfatprogs` (`mkfs.exfat`)
+[^3]: worli 2.0+ and worli-gui requires dependency `zenity`
+[^4]: Only the `install.wim` was needed for custom image using worli version 2.0 and above. You can use a full ISO and with a modified `install.wim` with all other alternatives.
 
-worli-gui now has uupdump ISO creation support (also a bit experimental)
+## INSTRUCTIONS
 
-Also you can use your own ISO and even a modified `install.wim`*
+## NOTICE: You are looking at the legacy version of worli. For faster installation (Linux only), please go check out ["worli2.0"](https://github.com/buddyjojo/worli/tree/worli2.0)
 
-*\* A modified `install.wim` to still requires an ISO file for the `boot.wim` and boot files*
-
-## INSTRUCTIONS:
-
-1. Go to "Releases" and download the latest ["worli.sh"](https://github.com/buddyjojo/worli/releases/latest/download/worli.sh) or ["worli-gui.sh"](https://github.com/buddyjojo/worli/releases/latest/download/worli-gui.sh) of your choice.
-
-  > HELP WANTED: If you have a bit of spare time it would be nice if you try the script in the repo's code section and see if it works, if it does or any problem araises please create an issue or contact me on the Discard severe.
+1. Go to ["Releases"](https://github.com/buddyjojo/worli/releases) and download the latest legacy (in this case, v1.4) ["worli.sh"](https://github.com/buddyjojo/worli/releases/download/1.4/worli.sh) or ["worli-gui.sh"](https://github.com/buddyjojo/worli/releases/download/1.4/worli-gui.sh) of your choice.
 
 2. Put the script into an empty folder **WITH NO SPACES IN ITS NAME**!
 
