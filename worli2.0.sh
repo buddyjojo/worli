@@ -80,7 +80,14 @@ case $? in
     export uefntf="/tmp/worli/bootaa64.efi"
     export uefntfd="/tmp/worli/ntfs_aa64.efi"
     
-    export pei="/tmp/worli/worlipe.cmd" #this line
+    
+    
+    #---Change this to the location of `worlipe-no-re.cmd` if you did not want WinRE (see GitHub description)---#
+    export pei="/tmp/worli/worlipe.cmd"
+    #-----------------------------------------------------------------------------------------------------------#
+    
+    
+    
     export bexec="/tmp/worli/batchexec.exe"
     export bcd="/tmp/worli/BCD"
     
