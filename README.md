@@ -33,6 +33,8 @@ Required dependencies: `zenity`, `wimupdate` and `wimapply` ([wimlib](https://wi
 
 Required dependencies for auto file downloads: `wget`, `jq`.
 
+Required dependencies for direct ESD download: `aria2c`
+
 Required dependencies for auto ISO generation: `jq`, `aria2c`, `cabextract`, `chntpw`, `mkisofs` or `genisoimage`.
 
 ## INSTRUCTIONS
