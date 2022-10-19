@@ -70,9 +70,9 @@ case $? in
     wget -O "/tmp/worli/bootaa64.efi" "https://github.com/pbatard/uefi-ntfs/releases/latest/download/bootaa64.efi" || error "Failed to download bootaa64.efi from pbatard/uefi-ntfs"
     wget -O "/tmp/worli/ntfs_aa64.efi" "https://github.com/pbatard/ntfs-3g/releases/latest/download/ntfs_aa64.efi" || error "Failed to download ntfs_aa64.efi from pbatard/ntfs-3g"
     
-    wget -O "/tmp/worli/worlipe.cmd" "https://github.com/buddyjojo/worli/raw/worli2.0/files/worlipe.cmd" || error "Failed to download worlipe.cmd"
-    wget -O "/tmp/worli/batchexec.exe" "https://github.com/buddyjojo/worli/raw/worli2.0/files/batchexe.exe" || error "Failed to download batchexec.exe"
-    wget -O "/tmp/worli/BCD" "https://github.com/buddyjojo/worli/raw/worli2.0/files/BCD" || error "Failed to download the BCD"
+    wget -O "/tmp/worli/worlipe.cmd" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/worlipe.cmd" || error "Failed to download worlipe.cmd"
+    wget -O "/tmp/worli/batchexec.exe" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/batchexe.exe" || error "Failed to download batchexec.exe"
+    wget -O "/tmp/worli/BCD" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/BCD" || error "Failed to download the BCD"
     
     export efi="/tmp/worli/UEFI_Firmware.zip"
     export driv="/tmp/worli/Windows_ARM64_Drivers.zip"
@@ -217,11 +217,116 @@ else
     debug "All dependances are met!"
 fi
 
-zenity --question --title="worli" --text "Do you want this script to generate its own iso with uupdump? (press No to use your own iso or a previously generated one)"
+dwnopt=$(zenity --question --title="worli" --text "Do you want:\n\n(1) this script to download a esd directly from microsoft (fastest, en_us only)\n(2) generate iso with uupdump (slower, gives language options)\n(3) use your own iso/esd or a previously generated/downloaded one?" --switch --extra-button "1" --extra-button "2" --extra-button "3")
+
+
+case $dwnopt in
+
+    1)
+
+if ! command -v aria2c &> /dev/null
+then
+    zenity --title "worli" --info --ok-label="Exit" --text "'aria2c' package not installed. Install it\n\n For Debian and Ubuntu, run 'sudo apt install aria2'\n\n for Arch, run 'sudo pacman -S aria2'"
+    exit 1
+fi
+    
+winver=$(zenity --list --title="worli" --text="What windows version do you want?\n\nNote: defaults to 22621.525" --column 'Windows version' "Windows 11, 22621.525" "Windows 11, 22000.318" "Windows 10, 19044.1288" --height=300)
+
+case $winver in
+
+  "Windows 11, 22621.525")
+    export esdurl="http://dl.delivery.mp.microsoft.com/filestreamingservice/files/3da94e91-327c-48ce-8bc8-7a2af30fc4bc/22621.525.220925-0207.ni_release_svc_refresh_CLIENTCONSUMER_RET_A64FRE_en-us.esd"
+    ;;
+
+  "Windows 11, 22000.318")
+    export esdurl="http://dl.delivery.mp.microsoft.com/filestreamingservice/files/78630d4b-9cdc-44ee-9c4a-fd14e8d72936/22000.318.211104-1236.co_release_svc_refresh_CLIENTCONSUMER_RET_A64FRE_en-us.esd"
+    ;;
+
+  "Windows 10, 19044.1288")
+    export esdurl="http://dl.delivery.mp.microsoft.com/filestreamingservice/files/3da94e91-327c-48ce-8bc8-7a2af30fc4bc/22621.525.220925-0207.ni_release_svc_refresh_CLIENTCONSUMER_RET_A64FRE_en-us.esd"
+    ;;
+
+  *)
+    exit 1
+    ;;
+esac
+
+    
+tmpuupvar=$(zenity --question --title="worli" --text "Do you want the esd to be deleted when the script finishes?\n\nnote: the esd will be put in the current directory ($PWD)\n\nnote: the /tmp option is not recommended as /tmp can be too small to fit the esd (~3.6GB)\n\nnote: the /tmp option will delete the esd when the script finishes" --extra-button "download esd in /tmp")
 
 case $? in
-
     [0])
+    export esdpth="$(pwd)"
+    export delesd=1
+    ;;
+    [1])
+    export esdpth="$(pwd)"
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+if [[ $tmpuupvar == "download esd in /tmp" ]]; then
+    mkdir /tmp/worli/tmpesd
+    export esdpth=/tmp/worli/tmpesd
+    export tmpesd=1
+fi
+
+if [[ -f $esdpth/win.esd ]] ; then
+
+zenity --question --title="worli" --text "Previously generated win.esd found in $esdpth/win.esd, would you like to delete it?"
+
+case $? in
+    [0])
+    rm "$esdpth/win.esd"
+    ;;
+    [1])
+    error "Please remove or rename file $esdpth/win.esd (or use it with option 3)"
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
+fi
+
+zenity --title "worli" --info --ok-label="Continue" --text "The aria2c download will now be ran\nIts output will be in the terminal where this script was ran"
+
+esddwn() {
+ aria2c -d $esdpth -o "win.esd" $esdurl >&2
+}
+
+(
+
+esddwn
+if [[ $? -ne 0 ]]; then
+    echo "# download failed, trying again. current amount of attempts: $counter"
+    sleep 5
+    esddwn
+    while [ $? -ne 0 ]; do
+        counter=$(( counter + 1 ))
+        echo "# download failed, trying again. current amount of attempts: $counter"
+        sleep 5
+        esddwn
+    done
+else
+    zenity --title "worli" --info --ok-label="Continue" --text "The esd download suceeded!"
+fi
+
+) |
+zenity --progress \
+  --title="worli" \
+  --text="Downloading esd...." \
+  --pulsate \
+  --auto-close
+  
+(( $? != 0 )) && exit 1 
+    
+export iso="$esdpth/win.esd"
+
+    ;;
+    2)
 
 if ! command -v jq &> /dev/null
 then
@@ -437,7 +542,7 @@ fi
 
     ;;
 
-    [1])
+    3)
 
 zenity --title "worli" --info --ok-label="Next" --text "Prerequisites\n\n- Get the windows ISO: <a href='https://worproject.com/guides/getting-windows-images'>https://worproject.com/guides/getting-windows-images</a>\n\n- Rename the ISO file to 'win.iso'\n\n- If you want use use a modified install.wim, rename it to 'install.wim'\n\n<span color=\"red\">DO THE PREREQUISITES BEFORE CONTINUING</span>"
 
@@ -458,9 +563,31 @@ case $? in
     ;;
 esac
 
+elif [[ -f $(pwd)/win.esd ]] || [[ -f /tmp/worli/tmpesd/win.esd ]] ; then
+
+zenity --question --title="worli" --text "Previously downloaded esd found, would you like to use that or use another one?"
+
+case $? in
+    [0])
+    
+    if [ -f /tmp/worli/tmpesd/win.esd ]; then
+        iso="/tmp/worli/tmpesd/win.esd"
+    else
+        iso="$(pwd)/win.esd"
+    fi
+
+    ;;
+    [1])
+    iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso' or 'install.wim' or 'win.esd'?\n\n E.g. '~/win.iso'")
+    ;;
+    *)
+    exit 1
+    ;;
+esac
+
 else
 
-iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso' or 'install.wim'?\n\n E.g. '~/win.iso'")
+iso=$(zenity --title "worli" --entry --text "What's the path to the 'win.iso' or 'install.wim' or 'win.esd'?\n\n E.g. '~/win.iso'")
 
 fi
 
@@ -475,12 +602,12 @@ esac
 
 
 if [ -f $iso ]; then
-    debug "'win.iso/install.wim' found"
+    debug "'win.iso/install.wim/win.esd' found"
 else
-    error "'win.iso/install.wim' does not exist. iso veriable was set to '$iso'"
+    error "'win.iso/install.wim/win.esd' does not exist. iso veriable was set to '$iso'"
 fi
 
-if [[ $iso =~ \.[Ww][Ii][Mm]$ ]]; then
+if [[ $iso =~ \.[Ww][Ii][Mm]$ ]] || [[ $iso =~ \.[Ee][Ss][Dd]$ ]]; then
     export fulliso=0
     debug "full iso detected = $fulliso, $iso"
 else
@@ -681,6 +808,12 @@ if [[ $deluup == *"1"* ]]; then
     rm -rf $uuproot/uup
 else
     debug "uups set to not be deleted"
+fi
+
+if [[ $delesd == *"1"* ]]; then
+    rm -rf $esdpth
+else
+    debug "esd set to not be deleted"
 fi
 
 echo "100"
