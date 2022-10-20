@@ -324,6 +324,7 @@ zenity --progress \
 (( $? != 0 )) && exit 1 
     
 export iso="$esdpth/win.esd"
+export esd=1
 
     ;;
     2)
@@ -572,8 +573,10 @@ case $? in
     
     if [ -f /tmp/worli/tmpesd/win.esd ]; then
         iso="/tmp/worli/tmpesd/win.esd"
+        export esd=1
     else
         iso="$(pwd)/win.esd"
+        export esd=1
     fi
 
     ;;
@@ -607,11 +610,17 @@ else
     error "'win.iso/install.wim/win.esd' does not exist. iso veriable was set to '$iso'"
 fi
 
-if [[ $iso =~ \.[Ww][Ii][Mm]$ ]] || [[ $iso =~ \.[Ee][Ss][Dd]$ ]]; then
+if [[ $iso =~ \.[Ww][Ii][Mm]$ ]]; then
     export fulliso=0
+    export esd=0
     debug "full iso detected = $fulliso, $iso"
+elif [[ $iso =~ \.[Ee][Ss][Dd]$ ]]; then
+    export esd=1
+    export fulliso=0
+    debug "esd detected = $esd, $iso"
 else
     export fulliso=1
+    export esd=0
     debug "full iso detected = $fulliso, $iso"
 fi
 
@@ -729,6 +738,8 @@ if [[ $fulliso == *"1"* ]]; then
     
     rm -rf /tmp/worli/isomount
     
+elif [[ $esd == *"1"* ]]; then
+    wimapply --check $iso 6 /dev/$nisk'2' >&2
 else
     wimapply --check $iso 1 /dev/$nisk'2' >&2
 fi
