@@ -775,18 +775,18 @@ cp /tmp/worli/winpart/Windows/Boot/Resources/bootres.dll /tmp/worli/winpart/EFI/
 cp -r /tmp/worli/winpart/Windows/Boot/EFI/CIPolicies /tmp/worli/winpart/EFI/Microsoft/Boot/
 cp -r /tmp/worli/winpart/Windows/Boot/Fonts /tmp/worli/winpart/EFI/Microsoft/Boot/
 
-wimupdate /tmp/worli/winpart/Windows/System32/Recovery/winre.wim 1 --command="add ${pei} /worlipe.cmd"
+wimupdate /tmp/worli/winpart/Windows/System32/Recovery/*inre.wim 1 --command="add ${pei} /worlipe.cmd"
 
-wimupdate /tmp/worli/winpart/Windows/System32/Recovery/winre.wim 1 --command="rename /sources/recovery/RecEnv.exe /sources/recovery/RecEnv.exe.bak"
+wimupdate /tmp/worli/winpart/Windows/System32/Recovery/*inre.wim 1 --command="rename /sources/recovery/RecEnv.exe /sources/recovery/RecEnv.exe.bak"
 
-wimupdate /tmp/worli/winpart/Windows/System32/Recovery/winre.wim 1 --command="add ${bexec} /sources/recovery/RecEnv.exe"
+wimupdate /tmp/worli/winpart/Windows/System32/Recovery/*inre.wim 1 --command="add ${bexec} /sources/recovery/RecEnv.exe"
 
 echo "60"
 echo "# Copying the drivers to the drive..."
 debug "Copying the drivers to the drive."
 
 unzip $driv -d /tmp/worli/driverpackage
-wimupdate /tmp/worli/winpart/Windows/System32/Recovery/winre.wim 1 --command="add /tmp/worli/driverpackage /drivers"
+wimupdate /tmp/worli/winpart/Windows/System32/Recovery/*inre.wim 1 --command="add /tmp/worli/driverpackage /drivers"
 
 echo "70"
 echo "# Copying the UEFI boot files to the drive..."
