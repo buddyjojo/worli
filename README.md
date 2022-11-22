@@ -49,7 +49,7 @@ Required dependencies for auto ISO generation: `jq`, `aria2c`, `cabextract`, `ch
 
 #### A tip:
 
-If you with to not have the Windows Recovery Environment and want a quicker deployment (since it takes a bit to unpack and repack the WIM file), grab the [`worlipe-no-re.cmd`](https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/worlipe-no-re.cmd) from the files directory in this repo and edit the line around ~85 (very noticeable) of `worli2.0.sh` (pei="/tmp/worli/worlipe.cmd") to the path of the previously downloaded CMD script.
+If you wish to not have the Windows Recovery Environment and want a quicker deployment (since it takes a bit to unpack and repack the WIM file), grab the [`worlipe-no-re.cmd`](https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/worlipe-no-re.cmd) from the files directory in this repo and edit the line around ~85 (very noticeable) of `worli2.0.sh` (pei="/tmp/worli/worlipe.cmd") to the path of the previously downloaded CMD script.
 This is not necessary if you're using the manual download option, you just need to specify the other script when prompted in that case.
 
 ##
