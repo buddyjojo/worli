@@ -187,7 +187,7 @@ fi
 
 if ! command -v wimupdate &> /dev/null
 then
-    wimtool=" - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
+    wimtool=" - 'wimtools/wimlib' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimlib')"
     export requiredep=1
 fi
 
