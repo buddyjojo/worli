@@ -149,7 +149,7 @@ echo -e "${PREFIX} - If you're using a Raspberry Pi 4, you must update the Bootl
 echo " "
 if ! command -v wimupdate &> /dev/null
 then
-    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimtools')"
+    echo -e "${PREFIX} - 'wimtools' package not installed. Install it (For Debian and Ubuntu, run 'sudo apt install wimtools'; for Arch, run 'sudo pacman -S wimlib')"
     exit 1
 fi
 
