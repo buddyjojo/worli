@@ -29,6 +29,8 @@ Built for simplicity and compatibility.
 
 #### Full dependency list:
 
+> NOTE: The script gives commands for debian/arch to install these dependencies, this is just a refrence for other distros.
+
 Required dependencies: `zenity`, `wimupdate` and `wimapply` ([wimlib](https://wimlib.net/)), `parted`, `mk.ntfs` ([ntfs-3g/ntfsprogs](https://github.com/tuxera/ntfs-3g)), `zip`, `gawk`.
 
 Required dependencies for auto file downloads: `wget`, `jq`.
