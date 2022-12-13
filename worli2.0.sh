@@ -69,10 +69,9 @@ case $? in
     
     wget -O "/tmp/worli/bootaa64.efi" "https://github.com/pbatard/uefi-ntfs/releases/latest/download/bootaa64.efi" || error "Failed to download bootaa64.efi from pbatard/uefi-ntfs"
     wget -O "/tmp/worli/ntfs_aa64.efi" "https://github.com/pbatard/ntfs-3g/releases/latest/download/ntfs_aa64.efi" || error "Failed to download ntfs_aa64.efi from pbatard/ntfs-3g"
+    wget -O "/tmp/worli/pe-files.zip" "https://github.com/buddyjojo/worli/releases/latest/download/y-pe-files.zip" || error "Failed to download y-pe-files.zip from buddyjojo/worli"
     
-    wget -O "/tmp/worli/worlipe.cmd" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/worlipe.cmd" || error "Failed to download worlipe.cmd"
-    wget -O "/tmp/worli/batchexec.exe" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/batchexe.exe" || error "Failed to download batchexec.exe"
-    wget -O "/tmp/worli/BCD" "https://raw.githubusercontent.com/buddyjojo/worli/worli2.0/files/BCD" || error "Failed to download the BCD"
+    unzip /tmp/worli/pe-files.zip -d /tmp/worli/
     
     export efi="/tmp/worli/UEFI_Firmware.zip"
     export driv="/tmp/worli/Windows_ARM64_Drivers.zip"
