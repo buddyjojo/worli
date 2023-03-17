@@ -731,7 +731,7 @@ if [[ $fulliso == *"1"* ]]; then
 
     mount $iso /tmp/worli/isomount
     
-    wimapply --check /tmp/worli/isomount/sources/install.wim 1 /dev/$nisk'2' >&2
+    wimapply --check /tmp/worli/isomount/sources/install.* 1 /dev/$nisk'2' >&2
     
     umount /tmp/worli/isomount
     
