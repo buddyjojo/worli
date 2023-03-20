@@ -376,7 +376,7 @@ case $? in
     [1])
     updateid=$(zenity --title "worli" --entry --text "What's the uupdump.net uuid?\n\n e.g once you select the build you want the id will be in the url like:\n\nhttps://uupdump.net/selectlang.php?id= '6b1e576c-9854-44b4-9cdd-108d13cf0035'")
     
-    foundBuild=$(curl -sk "https://api.uupdump.net/listlangs.php?id=$updateid" | jq -r '.response.updateInfo.title')
+    foundBuild=$(curl -sk "https://uupdump.net/json-api/listlangs.php?id=$updateid" | jq -r '.response.updateInfo.title')
     
     if [[ $? -ne 0 ]]; then
         error "Got rate limited or id is incrorrect, please try again"
@@ -394,7 +394,7 @@ case $? in
         export ring="retail&build=19041.1"   
     fi
     
-    apiget=$(curl "https://api.uupdump.net/fetchupd.php?arch=arm64&ring=$ring" | jq -r '.response.updateArray[] | select( .updateTitle | contains("Windows")) | {Id: .updateId, Name: .updateTitle} ')
+    apiget=$(curl "https://uupdump.net/json-api/fetchupd.php?arch=arm64&ring=$ring" | jq -r '.response.updateArray[] | select( .updateTitle | contains("Windows")) | {Id: .updateId, Name: .updateTitle} ')
     
     if [[ $? -ne 0 ]]; then
         error "Probably got rate limited, please try again"
@@ -427,7 +427,7 @@ case $? in
     ;;
 esac
 
-langjson=$(curl -sk "https://api.uupdump.net/listlangs.php?id=$updateid" | jq -r '.response.langFancyNames')
+langjson=$(curl -sk "https://uupdump.net/json-api/listlangs.php?id=$updateid" | jq -r '.response.langFancyNames')
 
 if [[ $? -ne 0 ]]; then
     error "Probably got rate limited, please try again"
@@ -468,7 +468,7 @@ if [[ $tmpuupvar == "generate iso in /tmp" ]]; then
     export tmpuup=1
 fi
 
-wget -O "/tmp/worli/UUP.zip" "https://uupdump.net/get.php?id=$updateid&pack=en-us&edition=professional&autodl=2" || error "Failed to download UUP.zip"
+wget -O "/tmp/worli/UUP.zip" "https://uupdump.net/json-api/get.php?id=$updateid&pack=en-us&edition=professional&autodl=2" || error "Failed to download UUP.zip"
 
 export uupzip=1
 
