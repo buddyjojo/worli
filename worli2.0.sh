@@ -364,7 +364,7 @@ then
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debaian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb'\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc'"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb'\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc'"
     exit 1
 else
     debug "All dependances are met!"
