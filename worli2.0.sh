@@ -660,11 +660,11 @@ else
     export nisk="$disk"
 fi
 
-if [[ $disk == *"disk"* ]]; then
-    export nisk="${disk}s"
-else
-    export nisk="$disk"
-fi
+# if [[ $disk == *"disk"* ]]; then
+#     export nisk="${disk}s"
+# else
+#     export nisk="$disk"
+# fi
 
 if [[ $disk == *"/dev"* ]]; then
     error "how.... ('/dev' is in disk name)"
