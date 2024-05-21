@@ -37,6 +37,11 @@ if [[ $OSTYPE == 'darwin'* ]]; then
   then
     error "gsed command not found"
   fi
+
+  if ! command -v mkfs.exfat &> /dev/null
+  then
+    error "mkfs.exfat command not found, did you install it with brew?"
+  fi
   
   export MACOS=1
   export PATH=$PATH:/usr/local/sbin
