@@ -210,10 +210,10 @@ then
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n\n$wimtool\n\n$parted\n\n$exfat\n\n$gawk"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependencies\n\n$wimtool\n\n$parted\n\n$exfat\n\n$gawk"
     exit 1
 else
-    debug "All dependances are met!"
+    debug "All dependencies are met!"
 fi
 
 dwnopt=$(zenity --question --title="worli" --text "Do you want:\n\n(1) this script to download a esd directly from microsoft (fastest, en_us only)\n(2) generate iso with uupdump (slower, gives language options)\n(3) use your own iso/esd or a previously generated/downloaded one?" --switch --extra-button "1" --extra-button "2" --extra-button "3")
@@ -310,7 +310,7 @@ if [[ $? -ne 0 ]]; then
         esddwn
     done
 else
-    zenity --title "worli" --info --ok-label="Continue" --text "The esd download suceeded!"
+    zenity --title "worli" --info --ok-label="Continue" --text "The esd download succeeded!"
 fi
 
 ) |
@@ -364,10 +364,10 @@ then
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependances\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb'\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc'"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependencies\n$jq\n$aria2c\n$cabextract\n$chntpw\n$mkisofs\n\ninstall them:\n\nFor Debian and Ubuntu, run 'sudo apt install $jqp $aria2p $cabextractp $chntpwp $mkisofsdeb'\n\nFor Arch, run 'sudo pacman -S $jqp $aria2p $cabextractp $chntpwp $mkisofsarmc'"
     exit 1
 else
-    debug "All dependances are met!"
+    debug "All dependencies are met!"
 fi
     
 zenity --question --title="worli" --text "Do you want to use the latest retail/dev builds or enter your own uupdump.net build id? Press 'No' to use id"
@@ -379,7 +379,7 @@ case $? in
     foundBuild=$(curl -sk "https://uupdump.net/json-api/listlangs.php?id=$updateid" | jq -r '.response.updateInfo.title')
     
     if [[ $? -ne 0 ]]; then
-        error "Got rate limited or id is incrorrect, please try again"
+        error "Got rate limited or id is incorrect, please try again"
     else
         debug "Not null thats good"
     fi
@@ -474,7 +474,7 @@ export uupzip=1
 
 unzip "/tmp/worli/UUP.zip" -d "$uuproot/uup"
 
-zenity --question --title="worli" --text "uupdump is known to be unstable sometimes and may require multiple tries to sucessfully download all reqired files.\n\nto combat this, do you want to enable auto retry? It will indefinitely rerun the uup script until it suceeds.\n\nyou can stop this any time by pressing the cancel button on the 'progress' window or by ctrl+c'ing the terminal this script is running from"
+zenity --question --title="worli" --text "uupdump is known to be unstable sometimes and may require multiple tries to successfully download all required files.\n\nto combat this, do you want to enable auto retry? It will indefinitely rerun the uup script until it succeeds.\n\nyou can stop this any time by pressing the cancel button on the 'progress' window or by ctrl+c'ing the terminal this script is running from"
 
 case $? in
     [0])
@@ -515,10 +515,10 @@ if [[ $? -ne 0 ]]; then
         isogen
     done
     else
-    error "auto retry disabled, quitting scritpt"
+    error "auto retry disabled, quitting script"
     fi
 else
-    zenity --title "worli" --info --ok-label="Continue" --text "The uupdump script suceeded!"
+    zenity --title "worli" --info --ok-label="Continue" --text "The uupdump script succeeded!"
 fi
 
 ) |
@@ -606,7 +606,7 @@ esac
 if [ -f $iso ]; then
     debug "'win.iso/install.wim/win.esd' found"
 else
-    error "'win.iso/install.wim/win.esd' does not exist. iso veriable was set to '$iso'"
+    error "'win.iso/install.wim/win.esd' does not exist. iso variable was set to '$iso'"
 fi
 
 if [[ $iso =~ \.[Ww][Ii][Mm]$ ]]; then
@@ -839,8 +839,8 @@ zenity --progress \
 
 (( $? != 0 )) && exit 1
 
-zenity --title "worli" --info --ok-label="Done!" --text "Booting\n\n1. Connect the drive and other peripherals to your Raspberry Pi then boot it up.\n\n2. Assuming everything went right in the previous steps, the pi will boot up to a PE enviroment were it will do some configuring and then reboot to hopefully a full windows install.\n\nAll done :)\nThanks for using WoRli2.0"
+zenity --title "worli" --info --ok-label="Done!" --text "Booting\n\n1. Connect the drive and other peripherals to your Raspberry Pi then boot it up.\n\n2. Assuming everything went right in the previous steps, the pi will boot up to a PE environment were it will do some configuring and then reboot to hopefully a full windows install.\n\nAll done :)\nThanks for using WoRli2.0"
 
-debug "It has finnished"
+debug "It has finished"
 
 exit 0
