@@ -197,6 +197,12 @@ then
     export requiredep=1
 fi
 
+if ! command -v mkfs.fat &> /dev/null
+then
+    obese=" - 'mkfs.fat' command not found. Install it (For Debian and Ubuntu, run 'sudo apt install dosfstools'; for Arch, run 'sudo pacman -S dosfstools')"
+    export requiredep=1
+fi
+
 if ! command -v mkfs.ntfs &> /dev/null
 then
     exfat=" - 'mkfs.ntfs' command not found. Install NTFS support somehow (such as ntfs-3g and ntfsprogs)"
@@ -210,7 +216,7 @@ then
 fi
 
 if [[ $requiredep == *"1"* ]]; then
-    zenity --title "worli" --info --ok-label="Exit" --text "Dependencies\n\n$wimtool\n\n$parted\n\n$exfat\n\n$gawk"
+    zenity --title "worli" --info --ok-label="Exit" --text "Dependencies\n\n$wimtool\n\n$parted\n\n$obese\n\n$exfat\n\n$gawk"
     exit 1
 else
     debug "All dependencies are met!"
